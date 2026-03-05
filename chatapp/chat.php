@@ -696,10 +696,11 @@ require_once __DIR__ . '/api/chat_controller.php';
     }
 
         window.uploadImage = async function(file) {
-            const fd = new FormData();
-            fd.append('request_id', reqId);
-            fd.append('product_id', productId);
-            fd.append('image', file);
+           let formData = new FormData();
+        formData.append('image', file);
+        formData.append('request_id', '<?= htmlspecialchars($requestId, ENT_QUOTES, 'UTF-8') ?>');
+        formData.append('product_id', <?= $productId ?>);
+        formData.append('csrf_token', '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>');
 
             Swal.fire({
                 title: 'กำลังอัปโหลด...',

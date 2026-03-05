@@ -92,7 +92,8 @@ require_once __DIR__ . '/controllers/register_controller.php';
                 <span class="relative bg-white px-4 text-xs font-medium text-slate-400">Or continue with email</span>
             </div>
 
-            <form id="regForm" class="space-y-4">
+            <form id="registerForm" enctype="multipart/form-data" class="space-y-6">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 
                 <!-- Avatar Upload -->
                 <div class="flex flex-col items-center pb-2">

@@ -45,6 +45,7 @@ require_once __DIR__ . '/controllers/login_controller.php';
         <!-- Login Card -->
         <div class="w-full bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 p-8">
             <form action="login.php" method="POST" class="space-y-5">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 
                 <!-- Email / Username Field -->
                 <div class="space-y-2">

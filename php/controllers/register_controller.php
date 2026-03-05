@@ -11,7 +11,12 @@ if (!function_exists('json_response')) {
     }
 }
 
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+        json_response(['status' => 'error', 'message' => 'CSRF token mismatch'], 400);
+    }
     $username = trim($_POST['username'] ?? '');
     $pwd      = $_POST['password'] ?? '';
     $fname    = trim($_POST['fname'] ?? '');

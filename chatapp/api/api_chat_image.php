@@ -11,6 +11,12 @@ if (!isset($_SESSION['user_id'])) {
 require_once __DIR__ . "/../../config/database.php";
 
 $userId = (int)$_SESSION['user_id'];
+
+if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+    echo json_encode(['ok' => false, 'error' => 'csrf invalid']);
+    exit;
+}
+
 $requestId = $_POST['request_id'] ?? '';
 $productId = (int)($_POST['product_id'] ?? 0);
 

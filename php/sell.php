@@ -63,7 +63,8 @@ require_once __DIR__ . '/controllers/sell_controller.php';
         <?php endif; ?>
 
         <!-- Form Card -->
-        <form method="POST" enctype="multipart/form-data" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm mt-8 overflow-hidden">
+        <form method="POST" action="sell.php" enctype="multipart/form-data" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm mt-8 overflow-hidden">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
             
             <!-- Section 1: Item Photos -->
             <div class="p-6 sm:p-10">

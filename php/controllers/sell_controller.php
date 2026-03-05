@@ -6,9 +6,14 @@ if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }
 $user_id = (int)$_SESSION['user_id'];
 $currentUserId = $user_id;
 
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
+
 $errorMsg = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['product_name']);
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+        $errorMsg = "CSRF token ไม่ถูกต้อง";
+    } else {
+        $name = trim($_POST['product_name']);
     $price = (float)$_POST['product_price'];
     $cat = $_POST['category'];
     $cond = $_POST['item_condition'] ?? 'Used';
@@ -51,7 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $errorMsg = "เกิดข้อผิดพลาดในการบันทึกข้อมูล";
         }
     } else {
-        $errorMsg = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        if (empty($errorMsg)) {
+            $errorMsg = "กรุณากรอกข้อมูลให้ครบถ้วน";
+        }
+        }
     }
 }
 

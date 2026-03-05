@@ -3,7 +3,13 @@
 session_start();
 require_once __DIR__ . "/../../config/database.php";
 
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')) {
+        header('Location: login.php?error=csrf');
+        exit;
+    }
     $inputUsername = isset($_POST['username']) ? trim($_POST['username']) : '';
     $inputPassword = isset($_POST['password']) ? (string)$_POST['password'] : '';
 

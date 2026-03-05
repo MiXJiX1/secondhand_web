@@ -125,7 +125,7 @@ require_once __DIR__ . '/controllers/sales_income_controller.php';
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                     <?php if ($rows): foreach($rows as $r):
-                        $img = !empty($r['product_image']) ? ('../uploads/'.basename($r['product_image'])) : '../assets/no-image.png';
+                        $img = !empty($r['product_image']) ? ($baseUrl . '/uploads/'.basename($r['product_image'])) : $baseUrl . '/assets/default.png';
                     ?>
                     <tr class="hover:bg-slate-50/50 transition-colors">
                         <td class="px-6 py-4">

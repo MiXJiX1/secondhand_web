@@ -1,9 +1,8 @@
 <?php
-session_start();
 require_once __DIR__ . "/../../config/database.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-  header("Location: ../php/login.php"); exit();
+  header("Location: " . ($baseUrl ?? '') . "/login"); exit();
 }
 
 /* ===== CSRF ===== */
@@ -60,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $st->execute([$adminId, $note, $appeal_id]);
     }
   }
-  header('Location: ban_appeals.php'); exit;
+  header('Location: ' . ($baseUrl ?? '') . '/admin/ban-appeals'); exit;
 }
 
 /* ===== Data ===== */

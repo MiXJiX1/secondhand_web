@@ -95,9 +95,6 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                             
                             <!-- Dropdown -->
                             <div class="dropdown-menu hidden absolute right-6 top-10 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50 text-left">
-                                <a href="upgrade_user.php?id=<?= (int)$u['user_id'] ?>" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors">อัปเกรดเป็น Admin</a>
-                                <div class="h-px bg-slate-100 my-1"></div>
-                                
                                 <?php if ($status !== 'banned'): ?>
                                     <button type="button" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors btn-open-ban"
                                             data-user-id="<?= (int)$u['user_id'] ?>"
@@ -105,7 +102,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                                         แบนผู้ใช้
                                     </button>
                                 <?php else: ?>
-                                    <form method="post" action="controllers/user_status_action_controller.php" onsubmit="return confirm('ยืนยันการยกเลิกแบนผู้ใช้ <?= h($u['username']) ?> ?')">
+                                    <form method="post" action="<?= ($baseUrl ?? '') ?>/admin/user-status-action" onsubmit="return confirm('ยืนยันการยกเลิกแบนผู้ใช้ <?= h($u['username']) ?> ?')">
                                         <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                                         <input type="hidden" name="action" value="unban">
                                         <input type="hidden" name="user_id" value="<?= (int)$u['user_id'] ?>">
@@ -114,7 +111,21 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                                 <?php endif; ?>
                                 
                                 <div class="h-px bg-slate-100 my-1"></div>
-                                <a href="delete_user.php?id=<?= (int)$u['user_id'] ?>" onclick="return confirm('ยืนยันการลบผู้ใช้ <?= h($u['username']) ?> ?')" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium">ลบผู้ใช้</a>
+
+                                <form method="post" action="<?= ($baseUrl ?? '') ?>/admin/user-status-action" onsubmit="return confirm('ยืนยันการอัปเกรดผู้ใช้ <?= h($u['username']) ?> เป็น Admin?')">
+                                    <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                                    <input type="hidden" name="action" value="upgrade_admin">
+                                    <input type="hidden" name="user_id" value="<?= (int)$u['user_id'] ?>">
+                                    <button class="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors" type="submit">อัปเกรดเป็น Admin</button>
+                                </form>
+
+                                <div class="h-px bg-slate-100 my-1"></div>
+                                <form method="post" action="<?= ($baseUrl ?? '') ?>/admin/user-status-action" onsubmit="return confirm('ยืนยันการลบผู้ใช้ <?= h($u['username']) ?> ? การลบอาจล้มเหลวหากมีข้อมูลสินค้าหรือออเดอร์ค้างอยู่')">
+                                    <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="user_id" value="<?= (int)$u['user_id'] ?>">
+                                    <button class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium" type="submit">ลบผู้ใช้</button>
+                                </form>
                             </div>
                         <?php else: ?>
                             <span class="text-slate-300 flex justify-center"><span class="material-symbols-outlined text-[18px]">admin_panel_settings</span></span>
@@ -138,7 +149,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
     <!-- Modal Content -->
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
         <div class="relative bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-md w-full opacity-0 scale-95" id="banModalContent">
-            <form method="post" action="controllers/user_status_action_controller.php">
+            <form method="post" action="<?= ($baseUrl ?? '') ?>/admin/user-status-action">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg leading-6 font-bold text-slate-900">แบนผู้ใช้</h3>
@@ -380,7 +391,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
         document.getElementById('statsCount').textContent          = '0';
         document.getElementById('statsLatest').innerHTML           = '';
 
-        fetch('user_stats.php?user_id=' + encodeURIComponent(uid), { cache:'no-store', headers:{'Accept':'application/json'} })
+        fetch('<?= ($baseUrl ?? '') ?>/admin/user-stats?user_id=' + encodeURIComponent(uid), { cache:'no-store', headers:{'Accept':'application/json'} })
             .then(async r => {
                 if (!r.ok) throw new Error('HTTP '+r.status+' '+(await r.text()).slice(0,120));
                 return r.json();

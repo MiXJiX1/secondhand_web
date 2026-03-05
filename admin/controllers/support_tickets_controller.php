@@ -1,13 +1,12 @@
 <?php
 // admin/support_tickets.php — จัดการคำขอจากผู้ใช้ (UI สไตล์เดียวกับหน้า Users)
 declare(strict_types=1);
-session_start();
 
 require_once __DIR__ . '/../../config/database.php';
 
 // ตรวจสิทธิ์แอดมิน
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-  header("Location: ../php/login.php");
+  header("Location: " . ($baseUrl ?? '') . "/login");
   exit();
 }
 

@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once __DIR__ . '/../config/database.php';
 
 if (!isLoggedIn()) {
@@ -162,7 +161,7 @@ function formatChatTimeMockup($datetimeStr) {
                     $isSold = ($c['product_status'] === 'sold');
                 ?>
                 <!-- Chat List Item: Loaded via AJAX now -->
-                <a href="chat.php?request_id=<?= urlencode($c['request_id']) ?>&product_id=<?= (int)$c['product_id'] ?>" 
+                <a href="<?= $baseUrl ?>/chat-window?request_id=<?= urlencode($c['request_id']) ?>&product_id=<?= (int)$c['product_id'] ?>" 
                    onclick="loadChat(event, '<?= htmlspecialchars($c['request_id']) ?>', <?= (int)$c['product_id'] ?>, this)"
                    data-role="<?= strtolower($roleTag) ?>"
                    data-unread="<?= $isUnread ? 'true' : 'false' ?>"
@@ -303,7 +302,8 @@ function formatChatTimeMockup($datetimeStr) {
             }
 
             // Update URL without reloading
-            const newUrl = `chat.php?request_id=${encodeURIComponent(reqId)}&product_id=${productId}`;
+            const baseUrl = "<?= $baseUrl ?>";
+            const newUrl = `${baseUrl}/chat-window?request_id=${encodeURIComponent(reqId)}&product_id=${productId}`;
             window.history.pushState({path: newUrl}, '', newUrl);
 
             // Fetch partial UI

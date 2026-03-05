@@ -1,4 +1,78 @@
 <?php
+// Initialize database and helpers once
+require_once __DIR__ . '/config/database.php';
+
+// Simple Routing Logic
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+$path = parse_url($requestUri, PHP_URL_PATH);
+
+// Get base folder if any (to handle subdirectories)
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? ''; 
+$scriptDir = rtrim(dirname($scriptName), '/\\');
+if ($scriptDir !== '/' && $scriptDir !== '\\' && strpos($path, $scriptDir) === 0) {
+    $path = substr($path, strlen($scriptDir));
+}
+$path = ltrim($path, '/');
+
+// Robustness: Strip .php extension if present so /login.php is treated as /login
+if (str_ends_with(strtolower($path), '.php')) {
+    $path = substr($path, 0, -4);
+}
+
+// Treat empty path or 'index' as home
+if ($path === '' || $path === 'index') {
+    $path = '/';
+}
+
+// Route Dispatcher
+if (preg_match('/^product\/([0-9]+)$/', $path, $matches)) {
+    $_GET['product_id'] = $matches[1];
+    require_once __DIR__ . '/php/product_detail.php';
+    exit;
+}
+if (preg_match('/^seller\/([0-9]+)$/', $path, $matches)) {
+    $_GET['id'] = $matches[1];
+    require_once __DIR__ . '/php/seller_profile.php';
+    exit;
+}
+
+switch ($path) {
+    case 'sell':        require_once __DIR__ . '/php/sell.php'; exit;
+    case 'chat':        require_once __DIR__ . '/chatapp/chat_list.php'; exit;
+    case 'profile':     require_once __DIR__ . '/php/profile.php'; exit;
+    case 'topup':       require_once __DIR__ . '/php/topup.php'; exit;
+    case 'topup-process': require_once __DIR__ . '/php/topup_process.php'; exit;
+    case 'my-products': require_once __DIR__ . '/php/my_products.php'; exit;
+    case 'exchange':    require_once __DIR__ . '/php/exchange.php'; exit;
+    case 'edit-exchange': require_once __DIR__ . '/php/edit_exchange.php'; exit;
+    case 'delete-product': require_once __DIR__ . '/php/delete_product.php'; exit;
+    case 'login':       require_once __DIR__ . '/php/login.php'; exit;
+    case 'register':    require_once __DIR__ . '/php/register.php'; exit;
+    case 'logout':      require_once __DIR__ . '/php/logout.php'; exit;
+    case 'sales-income': require_once __DIR__ . '/php/sales_income.php'; exit;
+    case 'feedback':    require_once __DIR__ . '/php/feedback.php'; exit;
+    case 'about':       require_once __DIR__ . '/php/help/getting-started.php'; exit;
+    case 'forgot-password': require_once __DIR__ . '/php/forgot_password.php'; exit;
+    case 'chat-window': require_once __DIR__ . '/chatapp/chat.php'; exit;
+    // Admin routes
+    case 'admin/dashboard':         require_once __DIR__ . '/admin/dashboard.php'; exit;
+    case 'admin/users':             require_once __DIR__ . '/admin/users.php'; exit;
+    case 'admin/products':          require_once __DIR__ . '/admin/products.php'; exit;
+    case 'admin/payments':          require_once __DIR__ . '/admin/payments.php'; exit;
+    case 'admin/categories':        require_once __DIR__ . '/admin/categories.php'; exit;
+    case 'admin/support-tickets':   require_once __DIR__ . '/admin/support_tickets.php'; exit;
+    case 'admin/ban-appeals':       require_once __DIR__ . '/admin/ban_appeals.php'; exit;
+    case 'admin/bank-verifications': require_once __DIR__ . '/admin/bank_verifications.php'; exit;
+    case 'admin/abuse-reports':     require_once __DIR__ . '/admin/admin_abuse_reports.php'; exit;
+    case 'admin/stats':             require_once __DIR__ . '/admin/admin_stats.php'; exit;
+    case 'admin/user-ratings':      require_once __DIR__ . '/admin/admin_user_ratings.php'; exit;
+    case 'admin/user-status-action': require_once __DIR__ . '/admin/controllers/user_status_action_controller.php'; exit;
+    case 'admin/user-stats':        require_once __DIR__ . '/admin/controllers/user_stats_controller.php'; exit;
+    case 'admin/withdraw-action':   require_once __DIR__ . '/admin/controllers/withdraw_action_controller.php'; exit;
+    case 'admin/topup-action':      require_once __DIR__ . '/admin/controllers/topup_action_controller.php'; exit;
+}
+
+// Default: Show Homepage
 require_once __DIR__ . '/php/controllers/index_controller.php';
 ?>
 <!DOCTYPE html>
@@ -106,7 +180,7 @@ require_once __DIR__ . '/php/controllers/index_controller.php';
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 opacity-75 grayscale-[0.3]">
                     <?php foreach ($soldProducts as $p): 
                         $firstImg = firstImageFromField($p['product_image']);
-                        $imgSrc = $firstImg ? $baseUrl . '/uploads/' . $firstImg : $baseUrl . '/assets/no-image.png';
+                        $imgSrc = $firstImg ? $baseUrl . '/uploads/' . $firstImg : $baseUrl . '/assets/default.png';
                     ?>
                         <div class="bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 transition-all">
                             <div class="aspect-[4/3] relative overflow-hidden">

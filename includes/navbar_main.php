@@ -33,9 +33,16 @@ if ($currentUserId > 0 && empty($userDisplayName)) {
 }
 
 // Helper to determine active link
-$current_page = basename($_SERVER['PHP_SELF']);
-function navClass($pageName, $current_page) {
-    if ($current_page === $pageName) {
+$current_path = ltrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+// Strip subdirectory from path if needed (logic similar to index.php)
+$scriptDirMatch = rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/\\');
+if ($scriptDirMatch !== '/' && $scriptDirMatch !== '\\' && strpos($current_path, ltrim($scriptDirMatch, '/')) === 0) {
+    $current_path = substr($current_path, strlen(ltrim($scriptDirMatch, '/')));
+}
+$current_path = ltrim($current_path, '/');
+
+function navClass($targetPath, $current_path) {
+    if ($current_path === $targetPath || ($targetPath === '' && $current_path === '')) {
         return "text-primary text-base font-bold transition-colors";
     }
     return "text-slate-300 text-base font-medium hover:text-white transition-colors";
@@ -55,15 +62,15 @@ function navClass($pageName, $current_page) {
       <h2 class="text-xl font-bold leading-tight tracking-tight">Marketplace</h2>
     </a>
     <nav class="hidden xl:flex items-center gap-6">
-      <a class="<?= navClass('index.php', $current_page) ?>" href="<?= $url ?>/">หน้าแรก</a>
-      <a class="<?= navClass('sell.php', $current_page) ?>" href="<?= $url ?>/sell">ลงขายสินค้า</a>
-      <a class="<?= navClass('exchange.php', $current_page) ?>" href="<?= $url ?>/exchange">แลกเปลี่ยน</a>
-      <a class="<?= navClass('chat_list.php', $current_page) ?> flex items-center gap-1" href="<?= $url ?>/chat">
+      <a class="<?= navClass('', $current_path) ?>" href="<?= $url ?>/">หน้าแรก</a>
+      <a class="<?= navClass('sell', $current_path) ?>" href="<?= $url ?>/sell">ลงขายสินค้า</a>
+      <a class="<?= navClass('exchange', $current_path) ?>" href="<?= $url ?>/exchange">แลกเปลี่ยน</a>
+      <a class="<?= navClass('chat', $current_path) ?> flex items-center gap-1" href="<?= $url ?>/chat">
         แชท <span id="unreadBadge" class="bg-red-500 text-white rounded-full px-2 py-0 text-xs font-bold hidden"></span>
       </a>
-      <a class="<?= navClass('my_products.php', $current_page) ?>" href="<?= $url ?>/my-products">สินค้าของฉัน</a>
-      <a class="<?= navClass('topup.php', $current_page) ?>" href="<?= $url ?>/topup">เติมเงิน MSU-PAY</a>
-      <a class="<?= navClass('getting-started.php', $current_page) ?>" href="<?= $url ?>/php/help/getting-started.php">ช่วยเหลือ</a>
+      <a class="<?= navClass('my-products', $current_path) ?>" href="<?= $url ?>/my-products">สินค้าของฉัน</a>
+      <a class="<?= navClass('topup', $current_path) ?>" href="<?= $url ?>/topup">เติมเงิน MSU-PAY</a>
+      <a class="<?= navClass('about', $current_path) ?>" href="<?= $url ?>/about">ช่วยเหลือ</a>
     </nav>
   </div>
   
@@ -109,15 +116,15 @@ function navClass($pageName, $current_page) {
 
 <!-- Mobile Navigation Menu -->
 <div id="mobileMenu" class="hidden xl:hidden bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col gap-4 absolute w-full z-40 shadow-lg top-full left-0">
-    <a class="<?= navClass('index.php', $current_page) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/">หน้าแรก</a>
-    <a class="<?= navClass('sell.php', $current_page) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/sell">ลงขายสินค้า</a>
-    <a class="<?= navClass('exchange.php', $current_page) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/exchange">แลกเปลี่ยน</a>
-    <a class="<?= navClass('chat_list.php', $current_page) ?> block py-2 border-b border-slate-800 text-base flex items-center justify-between" href="<?= $url ?>/chat">
+    <a class="<?= navClass('', $current_path) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/">หน้าแรก</a>
+    <a class="<?= navClass('sell', $current_path) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/sell">ลงขายสินค้า</a>
+    <a class="<?= navClass('exchange', $current_path) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/exchange">แลกเปลี่ยน</a>
+    <a class="<?= navClass('chat', $current_path) ?> block py-2 border-b border-slate-800 text-base flex items-center justify-between" href="<?= $url ?>/chat">
         แชท <span id="mobileUnreadBadge" class="bg-red-500 text-white rounded-full px-2 py-0 text-xs font-bold hidden"></span>
     </a>
-    <a class="<?= navClass('my_products.php', $current_page) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/my-products">สินค้าของฉัน</a>
-    <a class="<?= navClass('topup.php', $current_page) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/topup">เติมเงิน</a>
-    <a class="<?= navClass('getting-started.php', $current_page) ?> block py-2 text-base" href="<?= $url ?>/php/help/getting-started.php">ช่วยเหลือ</a>
+    <a class="<?= navClass('my-products', $current_path) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/my-products">สินค้าของฉัน</a>
+    <a class="<?= navClass('topup', $current_path) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/topup">เติมเงิน</a>
+    <a class="<?= navClass('about', $current_path) ?> block py-2 text-base" href="<?= $url ?>/about">ช่วยเหลือ</a>
 </div>
 
 <script>

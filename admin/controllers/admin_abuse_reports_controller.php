@@ -1,8 +1,8 @@
 <?php
 /* admin_abuse_reports.php — จัดการข้อร้องเรียน */
 
-session_start();
-if (!isset($_SESSION['user_id'])) { header('Location: ../login.php'); exit; }
+require_once __DIR__ . "/../../config/database.php";
+if (!isset($_SESSION['user_id'])) { header('Location: ' . ($baseUrl ?? '') . '/login'); exit; }
 if (($_SESSION['role'] ?? '') !== 'admin') { throw new Exception('Forbidden', 403); }
 
 require_once __DIR__ . "/../../config/database.php";

@@ -4,14 +4,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
+require_once __DIR__ . "/../../config/database.php";
 
 if (!isLoggedIn()) {
   redirect($baseUrl . "/login");
 }
-
-/* ===== DB (ใช้ config กลาง) ===== */
-require_once __DIR__ . "/../../config/database.php";
 
 // PDO is provided by database.php ($pdo)
 

@@ -1,15 +1,13 @@
-<?php
-session_start();
+require_once __DIR__ . "/../../config/database.php";
 
 /* ── Auth & CSRF ───────────────────────────────────────────── */
 if (empty($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-  header("Location: ../login.php"); exit();
+  header("Location: " . ($baseUrl ?? '') . "/login"); exit();
 }
 if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
   throw new Exception('Invalid CSRF', 403);
 }
 
-require_once __DIR__ . "/../../config/database.php";
 $pdo->exec("SET NAMES utf8mb4");
 
 /* ── Inputs ────────────────────────────────────────────────── */
@@ -56,7 +54,7 @@ try {
   $pdo->commit();
 
   // กลับหน้า overview (คงอยู่ในแท็บ topup)
-  header("Location: payments.php?type=topup");
+  header("Location: " . ($baseUrl ?? '') . "/admin/payments?type=topup");
   exit();
 
 } catch (Throwable $e) {

@@ -1,6 +1,6 @@
 <?php
 // admin/layouts/admin_sidebar.php
-$currentFile = basename($_SERVER['PHP_SELF']);
+$currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
 
 // Count pending bank verifications for notification badge
 if (isset($pdo)) {
@@ -10,17 +10,20 @@ if (isset($pdo)) {
     $pendingBankCount = 0;
 }
 
+$adminBase = ($baseUrl ?? '') . '/admin';
+
 $menuItems = [
-    ['icon' => 'dashboard', 'title' => 'แดชบอร์ด', 'url' => 'dashboard.php'],
-    ['icon' => 'group', 'title' => 'จัดการผู้ใช้งาน', 'url' => 'users.php'],
-    ['icon' => 'inventory_2', 'title' => 'จัดการสินค้า', 'url' => 'products.php'],
-    ['icon' => 'category', 'title' => 'จัดการหมวดหมู่', 'url' => 'categories.php'],
-    ['icon' => 'payments', 'title' => 'การชำระเงิน', 'url' => 'payments.php'],
-    ['icon' => 'account_balance', 'title' => 'ยืนยันบัญชีธนาคาร', 'url' => 'bank_verifications.php', 'badge' => $pendingBankCount],
-    ['icon' => 'bar_chart', 'title' => 'สถิติระบบ', 'url' => 'admin_stats.php'],
-    ['icon' => 'warning', 'title' => 'รายงานผู้ใช้', 'url' => 'admin_user_ratings.php'], // abuse reports here too potentially
-    ['icon' => 'support_agent', 'title' => 'ติดต่อผู้ดูแล', 'url' => 'support_tickets.php'],
-    ['icon' => 'gavel', 'title' => 'คำร้องปลดแบน', 'url' => 'ban_appeals.php'],
+    ['icon' => 'dashboard',        'title' => 'แดชบอร์ด',           'url' => $adminBase . '/dashboard'],
+    ['icon' => 'group',            'title' => 'จัดการผู้ใช้งาน',      'url' => $adminBase . '/users'],
+    ['icon' => 'inventory_2',      'title' => 'จัดการสินค้า',         'url' => $adminBase . '/products'],
+    ['icon' => 'category',         'title' => 'จัดการหมวดหมู่',       'url' => $adminBase . '/categories'],
+    ['icon' => 'payments',         'title' => 'การชำระเงิน',          'url' => $adminBase . '/payments'],
+    ['icon' => 'account_balance',  'title' => 'ยืนยันบัญชีธนาคาร',    'url' => $adminBase . '/bank-verifications', 'badge' => $pendingBankCount],
+    ['icon' => 'bar_chart',        'title' => 'สถิติระบบ',             'url' => $adminBase . '/stats'],
+    ['icon' => 'star_rate',        'title' => 'คะแนนผู้ใช้',           'url' => $adminBase . '/user-ratings'],
+    ['icon' => 'support_agent',    'title' => 'ติดต่อผู้ดูแล',         'url' => $adminBase . '/support-tickets'],
+    ['icon' => 'gavel',            'title' => 'คำร้องปลดแบน',         'url' => $adminBase . '/ban-appeals'],
+    ['icon' => 'flag',             'title' => 'รายงานผู้ใช้',          'url' => $adminBase . '/abuse-reports'],
 ];
 ?>
 
@@ -32,7 +35,7 @@ $menuItems = [
     
     <!-- Logo area -->
     <div class="h-16 flex items-center px-6 border-b border-slate-100 flex-shrink-0">
-        <a href="dashboard.php" class="flex items-center gap-3">
+        <a href="<?= $adminBase ?>/dashboard" class="flex items-center gap-3">
             <div class="w-8 h-8 bg-primary rounded-xl flex items-center justify-center font-bold text-slate-900 text-lg">M</div>
             <span class="font-bold text-lg tracking-tight text-slate-800">Admin Panel</span>
         </a>
@@ -41,7 +44,7 @@ $menuItems = [
     <!-- Navigation -->
     <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
         <?php foreach ($menuItems as $item): 
-            $isActive = $currentFile === $item['url'];
+            $isActive = rtrim($currentPath, '/') === rtrim(parse_url($item['url'], PHP_URL_PATH), '/');
             $activeClass = $isActive ? 'bg-primary/10 text-slate-900 font-semibold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900';
             $iconClass = $isActive ? 'text-primary' : 'text-slate-400';
         ?>
@@ -57,7 +60,7 @@ $menuItems = [
 
     <!-- Bottom Action -->
     <div class="p-4 border-t border-slate-100">
-        <a href="../php/logout.php" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors">
+        <a href="<?= ($baseUrl ?? '') ?>/logout" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors">
             <span class="material-symbols-outlined text-[20px]">logout</span>
             <span class="text-sm font-semibold">ออกจากระบบ</span>
         </a>

@@ -1,7 +1,6 @@
 <?php
 require_once __DIR__ . '/controllers/forgot_password_controller.php';
 ?>
-?>
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -29,14 +28,14 @@ require_once __DIR__ . '/controllers/forgot_password_controller.php';
 
     <!-- Header (Mockup Style) -->
     <header class="w-full bg-transparent px-8 py-6 flex justify-between items-center fixed top-0 w-full z-50">
-        <a href="../index.php" class="flex items-center gap-2">
+        <a href="<?= $baseUrl ?>/" class="flex items-center gap-2">
             <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <span class="material-symbols-outlined text-[18px] text-slate-900">local_mall</span>
             </div>
             <span class="text-xl font-black text-slate-900 tracking-tight">Marketplace</span>
         </a>
         <div class="hidden sm:block">
-            <a href="help/getting-started.php" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 text-white hover:bg-slate-700 transition-colors">
+            <a href="<?= $baseUrl ?>/about" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 text-white hover:bg-slate-700 transition-colors">
                 <span class="material-symbols-outlined text-[18px]">question_mark</span>
             </a>
         </div>
@@ -107,14 +106,14 @@ require_once __DIR__ . '/controllers/forgot_password_controller.php';
                 <span class="font-bold text-slate-700">spam folder</span> to continue.
             </p>
 
-            <a href="login.php" class="block w-full bg-primary hover:bg-yellow-400 text-slate-900 font-bold py-3.5 rounded-xl transition-all shadow-sm text-sm mb-6">
+            <a href="<?= $baseUrl ?>/login" class="block w-full bg-primary hover:bg-yellow-400 text-slate-900 font-bold py-3.5 rounded-xl transition-all shadow-sm text-sm mb-6">
                 Back to Login
             </a>
 
             <div class="text-center">
                 <p class="text-xs font-medium text-slate-500">
                     Didn't receive an email? 
-                    <a href="forgot_password.php" class="text-slate-900 font-bold hover:underline">Resend Email</a>
+                    <a href="<?= $baseUrl ?>/forgot-password" class="text-slate-900 font-bold hover:underline">Resend Email</a>
                 </p>
             </div>
 
@@ -141,7 +140,7 @@ require_once __DIR__ . '/controllers/forgot_password_controller.php';
                 <p class="text-sm font-medium text-slate-500 mb-8 leading-relaxed">
                     This password reset link is invalid or has expired (30 minutes). Please request a new one.
                 </p>
-                <a href="forgot_password.php" class="block w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-sm text-sm">
+                <a href="<?= $baseUrl ?>/forgot-password" class="block w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-sm text-sm">
                     Request New Link
                 </a>
             <?php else: ?>
@@ -197,7 +196,7 @@ require_once __DIR__ . '/controllers/forgot_password_controller.php';
                 </form>
 
                 <div class="mt-8 text-center pt-6 border-t border-slate-50">
-                    <a href="login.php" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
+                    <a href="<?= $baseUrl ?>/login" class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
                         <span class="material-symbols-outlined text-[16px]">close</span>
                         Cancel
                     </a>

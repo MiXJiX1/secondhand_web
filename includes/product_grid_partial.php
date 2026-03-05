@@ -7,7 +7,7 @@ if ($rsActive && $rsActive->num_rows > 0) {
         $isOwner = ($currentUserId > 0 && $u_id === $currentUserId);
         
         $firstImg = firstImageFromField($row['product_image']);
-        $imgSrc = $firstImg ? $baseUrl . '/uploads/' . $firstImg : $baseUrl . '/assets/no-image.png';
+        $imgSrc = $firstImg ? $baseUrl . '/uploads/' . $firstImg : $baseUrl . '/assets/default.png';
         ?>
         <a href="<?= $baseUrl ?>/product/<?= $p_id ?>" class="group bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-500 cursor-pointer block">
             <div class="relative aspect-[4/5] overflow-hidden">
@@ -20,7 +20,7 @@ if ($rsActive && $rsActive->num_rows > 0) {
                 
                 <img src="<?= h($imgSrc) ?>" 
                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                     onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/no-image.png';"
+                     onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';"
                      alt="<?= h($row['product_name']) ?>">
                 
                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6">

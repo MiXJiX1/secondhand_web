@@ -1,9 +1,8 @@
 <?php
-session_start();
 require_once __DIR__ . "/../../config/database.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../php/login.php"); exit();
+    header("Location: " . ($baseUrl ?? '') . "/login"); exit();
 }
 
 /** --- helper: scalar --- */

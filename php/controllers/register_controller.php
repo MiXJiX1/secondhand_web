@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once __DIR__ . "/../../config/database.php";
 
 if (!function_exists('json_response')) {
@@ -28,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Simple MSU Validation
-    if (!preg_match('/^\d{11}$/', $username)) {
-        json_response(['status' => 'error', 'message' => 'ชื่อผู้ใช้ต้องเป็นรหัสนิสิต 11 หลัก'], 400);
+    if (!preg_match('/^\d{11,12}$/', $username)) {
+        json_response(['status' => 'error', 'message' => 'ชื่อผู้ใช้ต้องเป็นรหัสนิสิต 11-12 หลัก'], 400);
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !str_ends_with($email, '@msu.ac.th')) {
         json_response(['status' => 'error', 'message' => 'อีเมลต้องเป็น @msu.ac.th'], 400);

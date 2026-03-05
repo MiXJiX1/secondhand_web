@@ -4,8 +4,7 @@
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-session_start();
-
+require_once __DIR__ . "/../../config/database.php";
 header('Content-Type: application/json; charset=utf-8');
 
 if (!isset($_SESSION['user_id'])) {
@@ -24,7 +23,6 @@ if ($requestId==='' || $productId<=0) {
 }
 
 try {
-  require_once __DIR__ . "/../../config/database.php";
 
   // ===== helper: หา (หรือสร้าง) ผู้ใช้ escrow =====
   $escrowId = getEscrowUserId($pdo);

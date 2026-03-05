@@ -1,14 +1,12 @@
 <?php
-session_start();
+/* ====== DB: ใช้ config กลาง ====== */
+require_once __DIR__ . "/../../config/database.php";
 
 /* ====== ตรวจสิทธิ์แอดมิน ====== */
 if (empty($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-  header("Location: ../login.php");
+  header("Location: " . ($baseUrl ?? '') . "/login");
   exit();
 }
-
-/* ====== DB: ใช้ config กลาง ====== */
-require_once __DIR__ . "/../../config/database.php";
 
 /* ====== helper: ดึงข้อมูลแบบปลอดภัย (ตารางอาจไม่มี) ====== */
 if(!function_exists('safeQuery')){

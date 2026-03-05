@@ -1,8 +1,6 @@
 <?php
 /** forgot_password.php — ฟังก์ชันลืมรหัสผ่าน (ขอรีเซ็ต + ตั้งรหัสใหม่ด้วยโทเคน) */
 
-session_start();
-
 /* ===== DB (ใช้ config กลาง) ===== */
 require_once __DIR__ . "/../../config/database.php";
 

@@ -45,14 +45,14 @@ require_once __DIR__ . '/controllers/register_controller.php';
         </div>
         
         <div class="hidden md:flex items-center gap-8">
-            <a href="../index.php" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Shop</a>
-            <a href="sell.php" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Sell</a>
-            <a href="help/getting-started.php" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">About</a>
+            <a href="<?= $baseUrl ?>/" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Shop</a>
+            <a href="<?= $baseUrl ?>/sell" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Sell</a>
+            <a href="<?= $baseUrl ?>/php/help/getting-started.php" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">About</a>
         </div>
 
         <div class="flex items-center gap-4">
-            <a href="login.php" class="text-sm font-bold text-slate-900 hover:text-slate-600 transition-colors">Log In</a>
-            <a href="register.php" class="text-sm font-bold bg-primary text-slate-900 px-5 py-2 rounded-lg hover:bg-yellow-400 transition-colors shadow-sm">Sign Up</a>
+            <a href="<?= $baseUrl ?>/login" class="text-sm font-bold text-slate-900 hover:text-slate-600 transition-colors">Log In</a>
+            <a href="<?= $baseUrl ?>/register" class="text-sm font-bold bg-primary text-slate-900 px-5 py-2 rounded-lg hover:bg-yellow-400 transition-colors shadow-sm">Sign Up</a>
         </div>
     </nav>
 
@@ -99,7 +99,7 @@ require_once __DIR__ . '/controllers/register_controller.php';
                 <div class="flex flex-col items-center pb-2">
                     <div class="relative group cursor-pointer" onclick="document.getElementById('avatarBtn').click()">
                         <div class="w-20 h-20 rounded-full border-2 border-slate-200 overflow-hidden bg-slate-50">
-                            <img id="preview" src="../uploads/avatars/default.png" class="w-full h-full object-cover">
+                            <img id="preview" src="<?= $baseUrl ?>/assets/default.png" class="w-full h-full object-cover">
                         </div>
                         <div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <span class="material-symbols-outlined text-white text-[20px]">add_a_photo</span>
@@ -123,7 +123,7 @@ require_once __DIR__ . '/controllers/register_controller.php';
                 <!-- Student ID (Username in DB) -->
                 <div>
                     <label class="block text-sm font-bold text-slate-700 mb-1.5">Student ID</label>
-                    <input type="text" name="username" placeholder="650xxxxxxxxx" required pattern="\d{11}"
+                    <input type="text" name="username" placeholder="650xxxxxxxxx" required pattern="\d{11,12}"
                            class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
                 </div>
 
@@ -168,7 +168,7 @@ require_once __DIR__ . '/controllers/register_controller.php';
 
                 <div class="text-center pt-4">
                     <p class="text-sm font-medium text-slate-500">
-                        Already have an account? <a href="login.php" class="text-slate-900 font-black underline underline-offset-4 decoration-2">Log in</a>
+                        Already have an account? <a href="<?= $baseUrl ?>/login" class="text-slate-900 font-black underline underline-offset-4 decoration-2">Log in</a>
                     </p>
                 </div>
             </form>
@@ -254,7 +254,7 @@ require_once __DIR__ . '/controllers/register_controller.php';
                     confirmButtonColor: '#f9e71f',
                     confirmButtonText: '<span class="text-slate-900 font-bold">ไปหน้าเข้าสู่ระบบ</span>'
                 }).then(() => {
-                    window.location.href = 'login.php';
+                    window.location.href = '<?= $baseUrl ?>/login';
                 });
             } else {
                 Swal.fire({

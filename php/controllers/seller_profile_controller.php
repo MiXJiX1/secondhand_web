@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once __DIR__ . "/../../config/database.php";
 
 $seller_id = (int)($_GET['id'] ?? 0);

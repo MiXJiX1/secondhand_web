@@ -59,7 +59,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
             <p class="text-slate-500 font-medium">จัดการรายการแลกเปลี่ยนและข้อเสนอของคุณได้ที่นี่</p>
         </div>
         <div>
-            <a href="edit_exchange.php" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95 text-sm">
+            <a href="<?= $baseUrl ?>/edit-exchange" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95 text-sm">
                 <span class="material-symbols-outlined text-[18px]">add_circle</span>
                 ลงประกาศแลกเปลี่ยน
             </a>
@@ -97,15 +97,15 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
                 <p class="text-[15px] text-slate-500 font-medium mb-8 max-w-md mx-auto">
                     ลองค้นหาสินค้าที่น่าสนใจในพื้นที่ของคุณและเริ่มเสนอแลกเปลี่ยนได้ทันที
                 </p>
-                <a href="../index.php" class="inline-flex justify-center items-center px-6 py-3 bg-primary hover:bg-yellow-400 text-slate-900 font-bold rounded-xl transition-colors shadow-sm active:scale-95">
+                <a href="<?= $baseUrl ?>/" class="inline-flex justify-center items-center px-6 py-3 bg-primary hover:bg-yellow-400 text-slate-900 font-bold rounded-xl transition-colors shadow-sm active:scale-95">
                     สำรวจตลาดสินค้า
                 </a>
             </div>
         <?php else: ?>
             
             <?php foreach ($active_trades as $t): 
-                $myImg = $t['my_image'] ? '../uploads/'.htmlspecialchars($t['my_image']) : '../assets/no-img.png';
-                $theirImg = $t['their_image'] ? '../uploads/'.htmlspecialchars($t['their_image']) : '../assets/no-img.png';
+                $myImg = $t['my_image'] ? $baseUrl . '/uploads/'.htmlspecialchars(basename($t['my_image'])) : $baseUrl . '/assets/default.png';
+                $theirImg = $t['their_image'] ? $baseUrl . '/uploads/'.htmlspecialchars(basename($t['their_image'])) : $baseUrl . '/assets/default.png';
                 $cashAdj = (float)$t['cash_adjustment'];
                 $isMine = ($t['seller_id'] == $userId); // incoming
 
@@ -130,7 +130,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
                 <!-- Images Graphic -->
                 <div class="flex items-center gap-2 sm:gap-4 shrink-0 bg-slate-50/50 p-2 rounded-xl">
                     <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm">
-                        <img src="<?= $myImg ?>" class="w-full h-full object-cover mix-blend-multiply" onerror="this.onerror=null; this.src='/assets/default.png';">
+                        <img src="<?= $myImg ?>" class="w-full h-full object-cover mix-blend-multiply" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                         <div class="absolute top-0 left-0 bg-slate-800 text-white text-[9px] font-black px-1.5 py-0.5 rounded-br-lg shadow-sm">ของฉัน</div>
                     </div>
                     
@@ -145,7 +145,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
                     </div>
 
                     <div class="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shadow-sm">
-                        <img src="<?= $theirImg ?>" class="w-full h-full object-cover mix-blend-multiply" onerror="this.onerror=null; this.src='/assets/default.png';">
+                        <img src="<?= $theirImg ?>" class="w-full h-full object-cover mix-blend-multiply" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                         <div class="absolute top-0 left-0 bg-primary text-slate-900 text-[9px] font-black px-1.5 py-0.5 rounded-br-lg shadow-sm">ของเขา</div>
                     </div>
                 </div>
@@ -232,7 +232,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
                     <!-- Action Icons -->
                     <?php if ($t['display_status'] === 'ACCEPTED'): ?>
                         <?php $reqId = 'EXC-'.$t['item_id'].'-'.$t['offer_id']; ?>
-                        <a href="../chatapp/chat.php?request_id=<?= urlencode($reqId) ?>&product_id=0" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center shrink-0 transition-colors tooltip" title="แชทตกลงนัด">
+                        <a href="<?= $baseUrl ?>/chat-window?request_id=<?= urlencode($reqId) ?>&product_id=0" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center shrink-0 transition-colors tooltip" title="แชทตกลงนัด">
                             <span class="material-symbols-outlined text-[20px]">chat</span>
                         </a>
                     <?php endif; ?>
@@ -242,7 +242,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
                     </button>
 
                     <?php if ($isMine && $t['display_status'] !== 'COMPLETED'): ?>
-                        <a href="edit_exchange.php?id=<?= (int)$t['item_id'] ?>" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center shrink-0 transition-colors tooltip" title="แก้ไขรายการ">
+                        <a href="<?= $baseUrl ?>/edit-exchange?id=<?= (int)$t['item_id'] ?>" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center shrink-0 transition-colors tooltip" title="แก้ไขรายการ">
                             <span class="material-symbols-outlined text-[20px]">edit</span>
                         </a>
                     <?php endif; ?>
@@ -275,7 +275,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
             document.getElementById('offerModal').classList.remove('hidden');
             document.getElementById('offer_target_item_id').value = targetItemId;
             document.getElementById('offer_target_title').innerText = targetItemTitle;
-            document.getElementById('offer_target_img').src = targetItemImage || '/assets/default.png';
+            document.getElementById('offer_target_img').src = targetItemImage || '<?= $baseUrl ?>/assets/default.png';
         }
         function closeOfferModal() {
             document.getElementById('offerModal').classList.add('hidden');
@@ -314,7 +314,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
 
                     <!-- Target Item Summary -->
                     <div class="flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl mb-6">
-                        <img id="offer_target_img" src="/assets/default.png" class="w-12 h-12 rounded-lg object-cover bg-white border border-slate-200" alt="" onerror="this.onerror=null; this.src='/assets/default.png';">
+                        <img id="offer_target_img" src="<?= $baseUrl ?>/assets/default.png" class="w-12 h-12 rounded-lg object-cover bg-white border border-slate-200" alt="" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                         <div>
                             <div class="text-[11px] font-black text-slate-500 uppercase tracking-widest mb-0.5">สินค้าที่เสนอแลก</div>
                             <div id="offer_target_title" class="text-[14px] font-bold text-slate-900 line-clamp-1">Item Title</div>
@@ -325,7 +325,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
                         <label class="block text-[13px] font-bold text-slate-700 mb-2">ของส่วนตัวที่คุณต้องการแลก <span class="text-red-500">*</span></label>
                         <?php if (empty($my_available_items)): ?>
                             <div class="p-3 bg-red-50 text-red-600 border border-red-200 rounded-xl text-[14px] font-medium">
-                                คุณยังไม่มีสินค้าที่พร้อมสำหรับแลกเปลี่ยน <a href="edit_exchange.php" class="underline font-bold">กรุณาลงประกาศสินค้าก่อน</a> เพื่อยื่นข้อเสนอ
+                                คุณยังไม่มีสินค้าที่พร้อมสำหรับแลกเปลี่ยน <a href="<?= $baseUrl ?>/edit-exchange" class="underline font-bold">กรุณาลงประกาศสินค้าก่อน</a> เพื่อยื่นข้อเสนอ
                             </div>
                         <?php else: ?>
                             <select name="offer_item_id" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all shadow-sm font-medium" required>

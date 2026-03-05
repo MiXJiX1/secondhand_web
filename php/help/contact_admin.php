@@ -130,7 +130,7 @@ if(!function_exists('h')){ function h($s){ return htmlspecialchars((string)$s, E
 </head>
 <body>
   <div class="topbar">
-    <a class="back" href="../../index.php">← กลับหน้าแรก</a>
+    <a class="back" href="<?= $baseUrl ?>/">← กลับหน้าแรก</a>
     <div class="title">ติดต่อผู้ดูแลระบบ</div>
   </div>
 

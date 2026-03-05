@@ -1,13 +1,8 @@
-<?php
-/**
- * withdraw_action.php
- * จัดการคำขอถอนเครดิต: approve / reject / mark_paid (+อัปสลิป +ตรวจ Thunder)
- */
-session_start();
+require_once __DIR__ . "/../../config/database.php";
 
 /* ---------- Auth & CSRF ---------- */
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-  header("Location: ../php/login.php"); exit();
+  header("Location: " . ($baseUrl ?? '') . "/login"); exit();
 }
 if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
   throw new Exception('CSRF invalid', 400);
@@ -55,12 +50,11 @@ function verifyWithThunder(string $verifyUrl, string $token, string $transRef): 
 $action     = $_POST['action'] ?? '';
 $withdrawId = (int)($_POST['withdraw_id'] ?? 0);
 if ($withdrawId <= 0 || !in_array($action, ['approve','reject','mark_paid'], true)) {
-  header("Location: payments.php?type=withdraw"); exit();
+  header("Location: " . ($baseUrl ?? '') . "/admin/payments?type=withdraw"); exit();
 }
 
 /* ---------- DB ---------- */
-try {
-require_once __DIR__ . "/../../config/database.php";
+// DB is now already included at the top
   $pdo->exec("SET NAMES utf8mb4");
 
   $pdo->beginTransaction();
@@ -71,16 +65,16 @@ require_once __DIR__ . "/../../config/database.php";
   $w = $q->fetch();
   if (!$w) {
     $pdo->rollBack();
-    header("Location: payments.php?type=withdraw"); exit();
+    header("Location: " . ($baseUrl ?? '') . "/admin/payments?type=withdraw"); exit();
   }
 
   $status = $w['status'];
   $now    = date('Y-m-d H:i:s');
 
   // ช็อตคัทส่งกลับ
-  $done = function(string $flag) use ($pdo) {
+  $done = function(string $flag) use ($pdo, $baseUrl) {
     if ($pdo->inTransaction()) $pdo->commit();
-    header("Location: payments.php?type=withdraw&$flag=1"); exit();
+    header("Location: " . ($baseUrl ?? '') . "/admin/payments?type=withdraw&$flag=1"); exit();
   };
 
   /* ---------- 1) อนุมัติ ---------- */
@@ -207,12 +201,11 @@ require_once __DIR__ . "/../../config/database.php";
 
   // action ไม่แมตช์
   if ($pdo->inTransaction()) $pdo->rollBack();
-  header("Location: payments.php?type=withdraw"); exit();
+  header("Location: " . ($baseUrl ?? '') . "/admin/payments?type=withdraw"); exit();
 
-} catch (Throwable $e) {
   if ($pdo && $pdo->inTransaction()) $pdo->rollBack();
   if (!headers_sent()) {
-    header("Location: payments.php?type=withdraw&err=1");
+    header("Location: " . ($baseUrl ?? '') . "/admin/payments?type=withdraw&err=1");
   } else {
     echo "Error: " . htmlspecialchars($e->getMessage());
   }

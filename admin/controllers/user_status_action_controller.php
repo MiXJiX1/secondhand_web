@@ -1,22 +1,16 @@
-<?php
-/**
- * user_status_action.php
- * จัดการสถานะผู้ใช้: ban / unban (สำหรับแอดมิน)
- */
-session_start();
+require_once __DIR__ . "/../../config/database.php";
 
 /* ── Auth ─────────────────────────────────────────────── */
 if (empty($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-  header("Location: ../login.html"); exit();
+  header("Location: " . ($baseUrl ?? '') . "/login"); exit();
 }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-  header('Location: users.php'); exit();
+  header('Location: ' . ($baseUrl ?? '') . '/admin/users'); exit();
 }
 if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
   throw new Exception('CSRF invalid', 400);
 }
 
-require_once __DIR__ . "/../../config/database.php";
 $pdo->exec("SET NAMES utf8mb4");
 
 /* ── Inputs ───────────────────────────────────────────── */
@@ -24,23 +18,25 @@ $action = $_POST['action'] ?? '';
 $userId = (int)($_POST['user_id'] ?? 0);
 $adminId = (int)($_SESSION['user_id'] ?? 0);
 
-if ($userId <= 0 || !in_array($action, ['ban','unban'], true)) {
-  header('Location: users.php'); exit();
+if ($userId <= 0 || !in_array($action, ['ban','unban','delete','upgrade_admin'], true)) {
+  header('Location: ' . ($baseUrl ?? '') . '/admin/users'); exit();
+}
+  header('Location: ' . ($baseUrl ?? '') . '/admin/users'); exit();
 }
 
 /* ── ตรวจสิทธิ์เป้าหมาย ─────────────────────────────── */
 $chk = $pdo->prepare("SELECT user_id, role FROM users WHERE user_id=?");
 $chk->execute([$userId]);
 $target = $chk->fetch();
-if (!$target) { header('Location: users.php'); exit(); }
+if (!$target) { header('Location: ' . ($baseUrl ?? '') . '/admin/users'); exit(); }
 
 if ($target['role'] === 'admin') {
   // ไม่อนุญาตให้แบน/เลิกแบนแอดมินผ่านหน้าปกติ
-  header('Location: users.php?err=admin_protected'); exit();
+  header('Location: ' . ($baseUrl ?? '') . '/admin/users?err=admin_protected'); exit();
 }
 if ($userId === $adminId && $action === 'ban') {
   // กันแอดมินแบนตัวเอง
-  header('Location: users.php?err=self_ban_blocked'); exit();
+  header('Location: ' . ($baseUrl ?? '') . '/admin/users?err=self_ban_blocked'); exit();
 }
 
 /* ── ดำเนินการ ───────────────────────────────────────── */
@@ -69,7 +65,7 @@ try {
     }
 
     $pdo->commit();
-    header('Location: users.php?ban=1'); exit();
+    header('Location: ' . ($baseUrl ?? '') . '/admin/users?ban=1'); exit();
   }
 
   if ($action === 'unban') {
@@ -88,12 +84,30 @@ try {
     }
 
     $pdo->commit();
-    header('Location: users.php?unban=1'); exit();
+    header('Location: ' . ($baseUrl ?? '') . '/admin/users?unban=1'); exit();
+  }
+
+  if ($action === 'delete') {
+    // Delete user (might need to handle FKs depending on DB design)
+    // For safety, let's just delete the user record. If there are FKs without CASCADE, this will fail and be caught by the catch block.
+    $st = $pdo->prepare("DELETE FROM users WHERE user_id = ?");
+    $st->execute([$userId]);
+    
+    $pdo->commit();
+    header('Location: ' . ($baseUrl ?? '') . '/admin/users?deleted=1'); exit();
+  }
+
+  if ($action === 'upgrade_admin') {
+    $st = $pdo->prepare("UPDATE users SET role = 'admin' WHERE user_id = ?");
+    $st->execute([$userId]);
+    
+    $pdo->commit();
+    header('Location: ' . ($baseUrl ?? '') . '/admin/users?upgraded=1'); exit();
   }
 
   // เงื่อนไขอื่น ๆ (ไม่ควรถึงตรงนี้)
-  $pdo->rollBack();
-  header('Location: users.php'); exit();
+  if ($pdo->inTransaction()) $pdo->rollBack();
+  header('Location: ' . ($baseUrl ?? '') . '/admin/users'); exit();
 
 } catch (Throwable $e) {
   if ($pdo->inTransaction()) $pdo->rollBack();

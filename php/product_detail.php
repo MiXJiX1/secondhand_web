@@ -44,7 +44,7 @@ require_once __DIR__ . '/controllers/product_detail_controller.php';
             <div class="lg:col-span-7 space-y-6 lg:sticky lg:top-24 w-full max-w-[800px] mx-auto lg:mx-0">
                 <div class="relative w-full overflow-hidden bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-2xl" 
                      style="aspect-ratio: 1/1; height: auto;">
-                    <img id="mainImage" src="<?= $baseUrl ?>/<?= h($images[0]) ?>" 
+                    <img id="mainImage" src="<?= $baseUrl ?>/uploads/<?= h($images[0]) ?>" 
                          class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300 opacity-100">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent pointer-events-none"></div>
                 </div>
@@ -53,8 +53,8 @@ require_once __DIR__ . '/controllers/product_detail_controller.php';
                 <div class="flex gap-3 overflow-x-auto pb-2 no-scrollbar px-1 min-h-[70px]">
                     <?php foreach ($images as $idx => $img): ?>
                         <div class="thumb-btn flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 cursor-pointer transition-all hover:scale-105 <?= $idx === 0 ? 'border-primary' : 'border-transparent opacity-70 hover:opacity-100' ?>"
-                             onclick="updateMainImage(this, '<?= $baseUrl ?>/<?= h($img) ?>')">
-                            <img src="<?= $baseUrl ?>/<?= h($img) ?>" class="w-full h-full object-cover pointer-events-none">
+                         onclick="updateMainImage(this, '<?= $baseUrl ?>/uploads/<?= h($img) ?>')">
+                        <img src="<?= $baseUrl ?>/uploads/<?= h($img) ?>" class="w-full h-full object-cover pointer-events-none">
                         </div>
                     <?php endforeach; ?>
                 </div>

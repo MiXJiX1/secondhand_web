@@ -379,10 +379,10 @@ include __DIR__ . '/../includes/navbar_main.php';
 
         document.getElementById('qrBox').scrollIntoView({ behavior: 'smooth', block: 'end' });
 
-        fetch('topup_process.php?action=create_qr', {
+        fetch('<?= $baseUrl ?>/topup-process?action=create_qr', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: currentAmount })
+            body: JSON.stringify({ amount: currentAmount, csrf_token: '<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES) ?>' })
         })
         .then(res => res.json())
         .then(data => {
@@ -438,7 +438,7 @@ include __DIR__ . '/../includes/navbar_main.php';
             fd.append('ref', refObj.value);
         }
         
-        fetch('topup_process.php?action=verify_slip', {
+        fetch('<?= $baseUrl ?>/topup-process?action=verify_slip', {
             method:'POST',
             body: fd
         })

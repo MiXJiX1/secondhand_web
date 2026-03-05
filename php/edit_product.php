@@ -100,10 +100,10 @@ include __DIR__ . '/../includes/navbar_back.php';
                         <?php else: 
                             foreach ($imgs as $fn):
                                 $fn = basename($fn);
-                                $src = '../uploads/' . rawurlencode($fn);
+                                $src = $baseUrl . '/uploads/' . rawurlencode($fn);
                         ?>
                             <div class="img-container">
-                                <img src="<?= htmlspecialchars($src) ?>" alt="Product image" onerror="this.onerror=null; this.src='/assets/default.png';">
+                                <img src="<?= htmlspecialchars($src) ?>" alt="Product image" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                             </div>
                         <?php endforeach; endif; ?>
                     </div>
@@ -126,7 +126,7 @@ include __DIR__ . '/../includes/navbar_back.php';
 
             <div class="actions">
                 <button type="submit" class="btn btn-warning py-3 fw-bold shadow-sm" style="flex:2">บันทึกการแก้ไข</button>
-                <a href="product_detail.php?id=<?= (int)$prod['product_id'] ?>" class="btn btn-secondary py-3 d-flex align-items-center justify-content-center" style="flex:1">ยกเลิก</a>
+                <a href="<?= $baseUrl ?>/product/<?= (int)$prod['product_id'] ?>" class="btn btn-secondary py-3 d-flex align-items-center justify-content-center" style="flex:1">ยกเลิก</a>
             </div>
         </form>
     </div>

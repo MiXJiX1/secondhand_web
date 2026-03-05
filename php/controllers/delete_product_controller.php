@@ -1,12 +1,14 @@
 <?php
-session_start();
+require_once __DIR__ . "/../../config/database.php";
 if (!isLoggedIn()) {
     redirect($baseUrl . "/login");
 }
 
-require_once __DIR__ . "/../../config/database.php";
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
+    // CSRF check
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
+        redirect($baseUrl . "/profile?error=csrf");
+    }
     $product_id = (int)$_POST['product_id'];
     $user_id = (int)$_SESSION['user_id'];
 

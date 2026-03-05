@@ -255,7 +255,7 @@ require_once __DIR__ . '/api/chat_controller.php';
                 }
             } else if (m.message && m.message.startsWith('IMAGE:')) {
                 const filename = m.message.replace('IMAGE:', '').trim();
-                const imgUrl = `../uploads/chat/${filename}`;
+                const imgUrl = `<?= $baseUrl ?>/uploads/chat/${filename}`;
                 
                 let img = document.createElement('img');
                 img.src = imgUrl;
@@ -313,7 +313,7 @@ require_once __DIR__ . '/api/chat_controller.php';
 
         window.loadMessages = function() {
             if (!reqId || productId <= 0 || !msgContainer) return;
-            fetch('api/fetch_messages.php?request_id=' + encodeURIComponent(reqId) + '&product_id=' + productId + '&_t=' + Date.now(), { cache: 'no-store' })
+            fetch('<?= $baseUrl ?>/chatapp/api/fetch_messages.php?request_id=' + encodeURIComponent(reqId) + '&product_id=' + productId + '&_t=' + Date.now(), { cache: 'no-store' })
             .then(r => r.json())
             .then(data => {
                 if (Array.isArray(data)) {
@@ -352,12 +352,12 @@ require_once __DIR__ . '/api/chat_controller.php';
             
             inp.value = '';
             inp.focus();
-
+            const baseUrl = "<?= $baseUrl ?>";
             const fd = new FormData();
             fd.append('request_id', reqId);
             fd.append('message', txt);
 
-            fetch('api/api_chat_send.php', { method:'POST', body: fd })
+            fetch(baseUrl + '/chatapp/api/api_chat_send.php', { method:'POST', body: fd })
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'ok') {
@@ -416,8 +416,8 @@ require_once __DIR__ . '/api/chat_controller.php';
             const fd = new FormData();
             fd.append('request_id', reqId);
             fd.append('message', txt);
-
-            fetch('api/api_chat_send.php', { method:'POST', body: fd })
+            const baseUrl = "<?= $baseUrl ?>";
+            fetch(baseUrl + '/chatapp/api/api_chat_send.php', { method:'POST', body: fd })
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'ok') {
@@ -478,7 +478,8 @@ require_once __DIR__ . '/api/chat_controller.php';
             }
 
             try {
-                const resp = await fetch('api/api_msupay_pay.php', {
+                const baseUrl = "<?= $baseUrl ?>";
+                const resp = await fetch(baseUrl + '/chatapp/api/api_msupay_pay.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -531,7 +532,8 @@ require_once __DIR__ . '/api/chat_controller.php';
             if (!result.isConfirmed) return;
 
             try {
-                const resp = await fetch('api/release_escrow.php', {
+                const baseUrl = "<?= $baseUrl ?>";
+                const resp = await fetch(baseUrl + '/chatapp/api/release_escrow.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -571,7 +573,7 @@ require_once __DIR__ . '/api/chat_controller.php';
             }
         }
 
-    async function openRatingModal() {
+    window.openRatingModal = async function openRatingModal() {
         const orderId = <?= $activeOrder['order_id'] ?? 0 ?>;
         if (!orderId) return;
 
@@ -634,7 +636,8 @@ require_once __DIR__ . '/api/chat_controller.php';
 
         if (formValues) {
             try {
-                const resp = await fetch('api/api_rate_order.php', {
+                const baseUrl = "<?= $baseUrl ?>";
+                const resp = await fetch(baseUrl + '/chatapp/api/api_rate_order.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -647,7 +650,27 @@ require_once __DIR__ . '/api/chat_controller.php';
                 const data = await resp.json();
                 if (data.ok) {
                     await Swal.fire('สำเร็จ', 'บันทึกคะแนนผู้ขายเรียบร้อยแล้ว', 'success');
-                    window.location.reload();
+                    // Reload the chat partial in-place (works in both partial & full modes)
+                    if (window.parent && window.parent !== window && window.parent.loadChatPartial) {
+                        window.parent.loadChatPartial();
+                    } else if (window.loadChatWindow) {
+                        window.loadChatWindow(<?= json_encode($requestId) ?>, <?= $productId ?>);
+                    } else {
+                        // Reload current partial URL into wrapper if possible, else full reload
+                        const wrapper = document.getElementById('chat-partial-wrapper');
+                        if (wrapper && window.location.search) {
+                            fetch(window.location.href + '&partial=true')
+                                .then(r => r.text())
+                                .then(html => {
+                                    const tmp = document.createElement('div');
+                                    tmp.innerHTML = html;
+                                    wrapper.replaceWith(tmp.firstElementChild || wrapper);
+                                })
+                                .catch(() => window.location.reload());
+                        } else {
+                            window.location.reload();
+                        }
+                    }
                 } else {
                     Swal.fire('Error', data.error || 'เกิดข้อผิดพลาด', 'error');
                 }
@@ -711,7 +734,8 @@ require_once __DIR__ . '/api/chat_controller.php';
             });
 
             try {
-                const resp = await fetch('api/api_chat_image.php', {
+                const baseUrl = "<?= $baseUrl ?>";
+                const resp = await fetch(baseUrl + '/chatapp/api/api_chat_image.php', {
                     method: 'POST',
                     body: fd
                 });

@@ -1,8 +1,6 @@
 <?php
-header('Content-Type: application/json; charset=utf-8');
-session_start();
-
 require_once __DIR__ . '/../../config/database.php';
+header('Content-Type: application/json; charset=utf-8');
 
 if (!isLoggedIn()) {
     echo json_encode(["status" => "error", "message" => "Not logged in"]);

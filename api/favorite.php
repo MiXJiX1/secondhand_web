@@ -1,13 +1,11 @@
 <?php
-session_start();
+require_once __DIR__ . '/../config/database.php';
 header('Content-Type: application/json; charset=utf-8');
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'not_logged_in']);
     exit;
 }
-
-require_once __DIR__ . '/../config/database.php';
 
 $userId = (int)$_SESSION['user_id'];
 $productId = isset($_POST['product_id']) ? (int)$_POST['product_id'] : 0;
@@ -44,5 +42,6 @@ try {
     }
 
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'error' => 'database_error', 'details' => $e->getMessage()]);
+    error_log("favorite.php PDO error: " . $e->getMessage());
+    echo json_encode(['success' => false, 'error' => 'database_error']);
 }

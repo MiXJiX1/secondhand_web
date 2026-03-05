@@ -59,7 +59,7 @@ include __DIR__ . '/../includes/navbar_main.php';
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             <?php foreach ($rows as $row): 
                 $first = firstImageFromField($row['product_image']);
-                $imgSrc = $first ? '/uploads/'.$first : '/assets/no-image.png';
+                $imgSrc = $first ? $baseUrl . '/uploads/' . $first : $baseUrl . '/assets/default.png';
                 $isSold = ($row['status'] === 'sold');
             ?>
             <div class="group bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col relative <?= $isSold ? 'opacity-80' : '' ?>">
@@ -69,7 +69,7 @@ include __DIR__ . '/../includes/navbar_main.php';
                 <?php endif; ?>
 
                 <div class="w-full aspect-[4/3] bg-slate-100 overflow-hidden relative">
-                    <img src="<?= h($imgSrc) ?>" alt="<?= h($row['product_name']) ?>" onerror="this.onerror=null; this.src='/assets/default.png';" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 <?= $isSold ? 'grayscale' : '' ?>">
+                    <img src="<?= h($imgSrc) ?>" alt="<?= h($row['product_name']) ?>" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 <?= $isSold ? 'grayscale' : '' ?>">
                     
                     <!-- Hover Action Overlay -->
                     <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm <?= $isSold ? 'hidden' : '' ?>">
@@ -102,7 +102,7 @@ include __DIR__ . '/../includes/navbar_main.php';
                         <?= h($row['product_name']) ?>
                     </h3>
                     
-                    <a href="product_detail.php?id=<?= (int)$row['product_id'] ?>" class="w-full block text-center bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-colors">ดูหน้ารายละเอียด</a>
+                    <a href="<?= $baseUrl ?>/product/<?= (int)$row['product_id'] ?>" class="w-full block text-center bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-colors">ดูหน้ารายละเอียด</a>
                 </div>
             </div>
             <?php endforeach; ?>

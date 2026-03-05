@@ -1,7 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . "/../../config/database.php";
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-  header("Location: ../php/login.php"); exit();
+  header("Location: " . ($baseUrl ?? '') . "/login"); exit();
 }
 
 /* ===== CSRF ===== */
@@ -9,9 +9,6 @@ if (empty($_SESSION['csrf_token'])) {
   $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
 }
 $csrf = $_SESSION['csrf_token'];
-
-/* ===== DB ===== */
-require_once __DIR__ . "/../../config/database.php";
 // PDO is provided by database.php ($pdo)
 
 try {

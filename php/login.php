@@ -44,7 +44,7 @@ require_once __DIR__ . '/controllers/login_controller.php';
 
         <!-- Login Card -->
         <div class="w-full bg-white rounded-2xl shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 p-8">
-            <form action="login.php" method="POST" class="space-y-5">
+            <form action="<?= $baseUrl ?>/login" method="POST" class="space-y-5">
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                 
                 <!-- Email / Username Field -->
@@ -85,7 +85,7 @@ require_once __DIR__ . '/controllers/login_controller.php';
                         </div>
                         <span class="text-xs font-medium text-slate-500 group-hover:text-slate-700 transition-colors">Remember me</span>
                     </label>
-                    <a href="forgot_password.php" class="text-xs font-bold text-slate-900 hover:text-slate-600 transition-colors">Forgot password?</a>
+                    <a href="<?= $baseUrl ?>/forgot-password" class="text-xs font-bold text-slate-900 hover:text-slate-600 transition-colors">Forgot password?</a>
                 </div>
 
                 <!-- Submit Button -->
@@ -124,7 +124,7 @@ require_once __DIR__ . '/controllers/login_controller.php';
 
         <!-- Sign Up Link -->
         <p class="text-sm font-medium text-slate-500 mt-8 mb-8 text-center">
-            Don't have an account? <a href="register.php" class="text-slate-900 font-black hover:underline underline-offset-4 decoration-2">Sign up</a>
+            Don't have an account? <a href="<?= $baseUrl ?>/register" class="text-slate-900 font-black hover:underline underline-offset-4 decoration-2">Sign up</a>
         </p>
 
         <!-- Feature Icons (Bottom) -->

@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/controllers/seller_profile_controller.php';
-?>?>
+?>
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -41,8 +41,8 @@ include __DIR__ . '/../includes/navbar_main.php';
                 <!-- Avatar -->
                 <div class="relative w-28 h-28 flex-shrink-0">
                     <div class="w-full h-full rounded-full ring-4 ring-primary/20 overflow-hidden bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm">
-                        <?php if ($avatarPath !== '../assets/no-avatar.png'): ?>
-                            <img src="<?= htmlspecialchars($avatarPath) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='../assets/default.png';">
+                        <?php if ($avatarPath !== $baseUrl . '/assets/no-avatar.png'): ?>
+                            <img src="<?= htmlspecialchars($avatarPath) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/no-avatar.png';">
                         <?php else: ?>
                             <span class="text-4xl">🙂</span>
                         <?php endif; ?>
@@ -102,19 +102,19 @@ include __DIR__ . '/../includes/navbar_main.php';
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                 <?php foreach ($products as $p): 
                     $imgField = $p['product_image'];
-                    $img = '../assets/default.png';
+                    $img = $baseUrl . '/assets/default.png';
                     if ($imgField) {
                         if ($imgField[0] === '[') {
                             $arr = json_decode($imgField, true);
-                            if (!empty($arr)) $img = '../uploads/'.basename($arr[0]);
+                            if (!empty($arr)) $img = $baseUrl . '/uploads/'.basename($arr[0]);
                         } else {
-                            $img = '../uploads/'.basename(explode('|', $imgField)[0]);
+                            $img = $baseUrl . '/uploads/'.basename(explode('|', $imgField)[0]);
                         }
                     }
                 ?>
-                <a href="product_detail.php?id=<?= $p['product_id'] ?>" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-primary transition-all flex flex-col h-full">
+                <a href="<?= $baseUrl ?>/product/<?= $p['product_id'] ?>" class="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-primary transition-all flex flex-col h-full">
                     <div class="aspect-square bg-slate-100 relative overflow-hidden">
-                        <img src="<?= htmlspecialchars($img) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="<?= htmlspecialchars($p['product_name']) ?>" onerror="this.onerror=null; this.src='../assets/default.png';">
+                        <img src="<?= htmlspecialchars($img) ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="<?= htmlspecialchars($p['product_name']) ?>" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                         <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 to-transparent p-3 pt-10">
                             <span class="text-white font-bold tracking-tight drop-shadow-md">฿<?= number_format((float)$p['product_price'], 2) ?></span>
                         </div>

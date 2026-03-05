@@ -1,12 +1,10 @@
 <?php
-session_start();
+require_once __DIR__ . "/../../config/database.php";
 if (!isLoggedIn()) {
     redirect($baseUrl . "/login");
 }
 $user_id = (int)$_SESSION['user_id'];
 
-// โหลดค่าคงที่ DB / Token ต่างๆ
-require_once __DIR__ . "/../../config/database.php";
 
 // Image helpers are already in database.php
 

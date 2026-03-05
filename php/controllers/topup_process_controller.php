@@ -1,27 +1,40 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
+require_once __DIR__.'/../../config/database.php';
+
 if (!isLoggedIn()) {
   echo json_encode(['ok'=>false,'message'=>'not login']);
   exit;
 }
 $userId = (int)$_SESSION['user_id'];
 
-require_once __DIR__.'/../../config/database.php';
-
 if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+  // Read CSRF from $_POST (form data) OR from X-CSRF-Token header OR from raw JSON body
+  $csrfFromPost   = $_POST['csrf_token'] ?? '';
+  $csrfFromHeader = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+  $rawBody = file_get_contents('php://input');
+  $jsonBody = !empty($rawBody) ? json_decode($rawBody, true) : null;
+  $csrfFromJson   = is_array($jsonBody) ? ($jsonBody['csrf_token'] ?? '') : '';
+  $submittedCsrf  = $csrfFromPost ?: ($csrfFromHeader ?: $csrfFromJson);
+
+  if (!hash_equals($_SESSION['csrf_token'] ?? '', $submittedCsrf)) {
     echo json_encode(['ok'=>false,'message'=>'csrf mismatch']); exit;
   }
+  // Restore raw body if it was read (for later json_decode in action handlers)
+  // Note: php://input can only be read once, so we cache it in a global
+  $GLOBALS['_raw_body'] = $rawBody;
 }
 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 try {
   if ($action === 'create_qr') {
-    $payload = json_decode(file_get_contents('php://input'), true);
+    // php://input already read during CSRF check; use cached value
+    $rawInput = $GLOBALS['_raw_body'] ?? file_get_contents('php://input');
+    $payload = json_decode($rawInput, true);
     if (!is_array($payload)) { echo json_encode(['ok'=>false,'message'=>'invalid json']); exit; }
 
     $amount = (float)($payload['amount'] ?? 0);
@@ -101,7 +114,7 @@ try {
         $checkDup = $pdo->prepare("SELECT topup_id FROM credit_topups WHERE trans_ref = ? AND status = 'approved' LIMIT 1");
         $checkDup->execute([$transRef]);
         if ($checkDup->fetch()) {
-            echo json_encode(['ok'=>false,'message'=>'slip already used']); exit;
+            echo json_encode(['ok'=>false,'message'=>'สลิปนี้ถูกใช้งานแล้ว กรุณาใช้สลิปใหม่']); exit;
         }
     }
 

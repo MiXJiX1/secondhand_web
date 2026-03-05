@@ -96,6 +96,18 @@ try {
   // Ignore permission errors
 }
 
+/* ===== ตาราง exchange_messages (สำหรับ EXC- chats) ===== */
+$pdo->exec("
+  CREATE TABLE IF NOT EXISTS exchange_messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    request_id VARCHAR(64) NOT NULL,
+    sender_id INT NOT NULL,
+    message MEDIUMTEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX(request_id)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+");
+
 /* ---------- AJAX แจ้งเตือน ---------- */
 if (isset($_GET['ajax'])) {
   header('Content-Type: application/json; charset=utf-8');

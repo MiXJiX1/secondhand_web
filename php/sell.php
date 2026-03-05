@@ -63,7 +63,7 @@ require_once __DIR__ . '/controllers/sell_controller.php';
         <?php endif; ?>
 
         <!-- Form Card -->
-        <form method="POST" action="sell.php" enctype="multipart/form-data" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm mt-8 overflow-hidden">
+        <form method="POST" action="<?= $baseUrl ?>/sell" enctype="multipart/form-data" class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm mt-8 overflow-hidden">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
             
             <!-- Section 1: Item Photos -->
@@ -184,7 +184,7 @@ require_once __DIR__ . '/controllers/sell_controller.php';
 
             <!-- Footer Actions -->
             <div class="border-t border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-6 sm:px-10 py-6 flex items-center justify-end gap-4">
-                <a href="../index.php" class="text-slate-500 dark:text-slate-400 font-bold hover:text-slate-700 dark:hover:text-slate-200 px-4 py-2 transition-colors">ยกเลิก</a>
+                <a href="<?= $baseUrl ?>/" class="text-slate-500 dark:text-slate-400 font-bold hover:text-slate-700 dark:hover:text-slate-200 px-4 py-2 transition-colors">ยกเลิก</a>
                 <button type="submit" class="bg-primary text-slate-900 font-bold px-10 py-3 rounded-lg hover:shadow-md transition-all">ลงขายทันที</button>
             </div>
         </form>

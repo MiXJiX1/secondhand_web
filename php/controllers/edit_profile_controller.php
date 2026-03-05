@@ -1,11 +1,9 @@
 <?php
-session_start();
+require_once __DIR__ . "/../../config/database.php";
 if (!isLoggedIn()) {
     redirect($baseUrl . "/login");
 }
 $user_id = (int)$_SESSION['user_id'];
-
-require_once __DIR__ . "/../../config/database.php";
 
 // Database already provided by config/database.php ($pdo)
 

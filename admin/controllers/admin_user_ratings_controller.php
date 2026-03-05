@@ -1,10 +1,10 @@
 <?php
 /* admin_user_ratings.php — รายงาน/จัดการเรตติ้งจากตาราง user_ratings */
 
-session_start();
+require_once __DIR__ . "/../../config/database.php";
 
 /* ===== ตรวจสิทธิ์แอดมิน ===== */
-if (!isset($_SESSION['user_id'])) { header('Location: ../login.php'); exit; }
+if (!isset($_SESSION['user_id'])) { header('Location: ' . ($baseUrl ?? '') . '/login'); exit; }
 if (($_SESSION['role'] ?? '') !== 'admin') { throw new Exception('Forbidden', 403); }
 
 /* ===== DB: ใช้ config กลาง ===== */

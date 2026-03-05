@@ -1,14 +1,12 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__ . "/../../config/database.php";
 header('Content-Type: application/json; charset=utf-8');
-session_start();
 
 if (!isLoggedIn()) {
     echo json_encode(['ok' => false, 'error' => 'unauthorized']);
     exit;
 }
-
-require_once __DIR__ . "/../../config/database.php";
 
 $userId = (int)$_SESSION['user_id'];
 

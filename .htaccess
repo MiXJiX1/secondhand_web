@@ -1,24 +1,10 @@
+Options -Indexes
 RewriteEngine On
+RewriteBase /
 
-# Ensure we don't rewrite actual files or directories
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+# Serve real static files directly (assets, uploads, js, css, images, etc.)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
 
-# 1. Product Details
-RewriteRule ^product/([0-9]+)$ php/product_detail.php?product_id=$1 [QSA,L]
-
-# 2. Common Pages
-RewriteRule ^sell$ php/sell.php [L]
-RewriteRule ^chat$ chatapp/chat_list.php [L]
-RewriteRule ^profile$ php/profile.php [L]
-RewriteRule ^topup$ php/topup.php [L]
-RewriteRule ^my-products$ php/my_products.php [L]
-RewriteRule ^exchange$ php/exchange.php [L]
-
-# 3. Auth
-RewriteRule ^login$ php/login.php [L]
-RewriteRule ^register$ php/register.php [L]
-RewriteRule ^logout$ php/logout.php [L]
-
-# Fallback
-RewriteRule ^(.*)$ index.php?path=$1 [QSA,L]
+# Route ALL other requests (including /admin/*, /chatapp/* etc.) through index.php
+RewriteRule ^(.*)$ index.php [QSA,L]

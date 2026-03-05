@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 require_once __DIR__ . "/../../config/database.php";
 
 if (!isLoggedIn()) {
@@ -29,7 +27,7 @@ if (!$product) {
 
 /* ---------- เตรียมรูป ---------- */
 $firstImg = firstImageFromField($product['product_image'] ?? '');
-$imgSrc = $firstImg ? $baseUrl . '/uploads/' . $firstImg : $baseUrl . '/assets/no-image.png';
+$imgSrc = $firstImg ? $baseUrl . '/uploads/' . $firstImg : $baseUrl . '/assets/default.png';
 
 /* ---------- CSRF ---------- */
 if (empty($_SESSION['csrf_token'])) {

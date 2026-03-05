@@ -69,7 +69,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
         <div class="bg-white rounded-2xl border border-slate-100 p-8 text-center text-slate-500 text-sm">— ไม่พบสินค้า —</div>
     <?php else: foreach ($products as $p):
         $imgFn  = firstImageFromField($p['product_image']);
-        $imgSrc = $imgFn ? "../uploads/".rawurlencode($imgFn) : "../assets/img/no-image.png";
+        $imgSrc = $imgFn ? "../uploads/".rawurlencode($imgFn) : "../assets/img/default.png";
         
         $badgeClass = '';
         if ($p['status'] === 'active') $badgeClass = 'bg-green-100 text-green-700 border-green-200';
@@ -79,7 +79,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
         <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4">
             <div class="flex gap-4">
                 <div class="w-20 h-20 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0">
-                    <img src="<?= htmlspecialchars($imgSrc) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='../assets/img/no-image.png';">
+                    <img src="<?= htmlspecialchars($imgSrc) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='../assets/img/default.png';">
                 </div>
                 <div class="flex-1 min-w-0">
                     <div class="flex justify-between items-start mb-1">
@@ -138,7 +138,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                     <tr><td colspan="7" class="py-12 text-center text-slate-500 font-medium">— ไม่พบสินค้า —</td></tr>
                 <?php else: foreach ($products as $p):
                     $imgFn  = firstImageFromField($p['product_image']);
-                    $imgSrc = $imgFn ? "../uploads/".rawurlencode($imgFn) : "../assets/img/no-image.png";
+                    $imgSrc = $imgFn ? "../uploads/".rawurlencode($imgFn) : "../assets/img/default.png";
                     
                     $badgeClass = '';
                     if ($p['status'] === 'active') $badgeClass = 'bg-green-100 text-green-700 border-green-200';
@@ -148,7 +148,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="py-3 px-4">
                             <div class="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 shadow-sm">
-                                <img src="<?= htmlspecialchars($imgSrc) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='../assets/img/no-image.png';">
+                                <img src="<?= htmlspecialchars($imgSrc) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='../assets/img/default.png';">
                             </div>
                         </td>
                         <td class="py-3 px-4">

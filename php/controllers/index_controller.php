@@ -3,7 +3,6 @@
  * index_controller.php
  * Handles logic for the main product listing page (index.php)
  */
-session_start();
 require_once __DIR__ . "/../../config/database.php";
 
 // 1. Fetch Categories for Filter

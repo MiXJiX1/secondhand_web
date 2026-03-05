@@ -68,7 +68,7 @@ include __DIR__ . '/../includes/navbar_main.php';
                 <div class="relative w-28 h-28 flex-shrink-0">
                     <div class="w-full h-full rounded-full ring-4 ring-primary/20 overflow-hidden bg-slate-100 flex items-center justify-center border-2 border-white shadow-sm">
                         <?php if ($avatarPath !== '../assets/no-avatar.png'): ?>
-                            <img src="<?= h($avatarPath) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/assets/default.png';">
+                            <img src="<?= h($avatarPath) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/no-avatar.png';">
                         <?php else: ?>
                             <span class="text-4xl">🙂</span>
                         <?php endif; ?>
@@ -253,7 +253,7 @@ include __DIR__ . '/../includes/navbar_main.php';
                     <h2 class="text-5xl font-black text-green-600 mb-6 drop-shadow-sm">฿<?= number_format($credit, 2) ?></h2>
                     
                     <div class="flex flex-col gap-3">
-                        <a href="topup.php" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl transition-colors flex justify-center items-center gap-2">
+                        <a href="<?= $baseUrl ?>/topup" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 px-6 rounded-xl transition-colors flex justify-center items-center gap-2">
                             <span class="material-symbols-outlined text-[20px]">add_circle</span> เเติมเครดิต
                         </a>
                         <button type="button" onclick="openWithdrawModal()" class="w-full bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-bold py-3 px-6 rounded-xl transition-colors flex justify-center items-center gap-2">
@@ -371,13 +371,13 @@ include __DIR__ . '/../includes/navbar_main.php';
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             <?php foreach ($purchases as $p): 
-                                $img = !empty($p['product_image']) ? '/uploads/'.basename($p['product_image']) : '/assets/no-image.png';
+                                $img = !empty($p['product_image']) ? $baseUrl . '/uploads/'.basename($p['product_image']) : $baseUrl . '/assets/default.png';
                             ?>
                             <tr class="hover:bg-slate-50 transition-colors group">
                                 <td class="py-4 pl-2">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 bg-slate-100 rounded overflow-hidden flex-shrink-0">
-                                            <img src="<?= h($img) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/assets/default.png';">
+                                            <img src="<?= h($img) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                                         </div>
                                         <span class="font-bold text-sm text-slate-900 line-clamp-1 max-w-[200px]"><?= h($p['product_name']) ?></span>
                                     </div>
@@ -408,7 +408,7 @@ include __DIR__ . '/../includes/navbar_main.php';
             <div id="sales" class="tab-content hidden">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-slate-900 tracking-tight">ประวัติการขายสินค้า</h3>
-                    <a href="sales_income.php" class="text-sm font-bold text-primary hover:text-yellow-600 flex items-center gap-1 transition-colors">
+                    <a href="<?= $baseUrl ?>/sales-income" class="text-sm font-bold text-primary hover:text-yellow-600 flex items-center gap-1 transition-colors">
                         ดูรายรับทั้งหมด <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                     </a>
                 </div>
@@ -427,13 +427,13 @@ include __DIR__ . '/../includes/navbar_main.php';
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             <?php foreach ($sales as $s): 
-                                $img = !empty($s['product_image']) ? '/uploads/'.basename($s['product_image']) : '/assets/no-image.png';
+                                $img = !empty($s['product_image']) ? $baseUrl . '/uploads/'.basename($s['product_image']) : $baseUrl . '/assets/default.png';
                             ?>
                             <tr class="hover:bg-slate-50 transition-colors group">
                                 <td class="py-4 pl-2">
                                     <div class="flex items-center gap-3">
                                         <div class="w-10 h-10 bg-slate-100 rounded overflow-hidden flex-shrink-0">
-                                            <img src="<?= h($img) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/assets/default.png';">
+                                            <img src="<?= h($img) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                                         </div>
                                         <span class="font-bold text-sm text-slate-900 line-clamp-1 max-w-[150px]"><?= h($s['product_name']) ?></span>
                                     </div>
@@ -475,15 +475,15 @@ include __DIR__ . '/../includes/navbar_main.php';
                         if ($imgField) {
                             if ($imgField[0] === '[') {
                                 $arr = json_decode($imgField, true);
-                                if (!empty($arr)) $img = '../uploads/'.basename($arr[0]);
+                                if (!empty($arr)) $img = $baseUrl . '/uploads/'.basename($arr[0]);
                             } else {
-                                $img = '../uploads/'.basename(explode('|', $imgField)[0]);
+                                $img = $baseUrl . '/uploads/'.basename(explode('|', $imgField)[0]);
                             }
                         }
                     ?>
-                    <a href="product_detail.php?id=<?= (int)$f['product_id'] ?>" class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-primary transition-all group">
+                    <a href="<?= $baseUrl ?>/product/<?= (int)$f['product_id'] ?>" class="flex items-center gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-primary transition-all group">
                         <div class="w-16 h-16 bg-slate-100 rounded-xl overflow-hidden flex-shrink-0">
-                            <img src="<?= h($img) ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.onerror=null; this.src='../assets/default.png';">
+                            <img src="<?= h($img) ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                         </div>
                         <div class="flex-1 min-w-0">
                             <h4 class="font-bold text-slate-900 truncate mb-1"><?= h($f['product_name']) ?></h4>

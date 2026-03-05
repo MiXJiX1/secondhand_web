@@ -150,11 +150,11 @@ function formatChatTimeMockup($datetimeStr) {
                     
                     if ($me == $c['seller_id']) {
                         $cName = trim($c['buyer_fname'].' '.$c['buyer_lname']) ?: 'Buyer';
-                        $cUserImg = $c['buyer_img'] ? '/uploads/avatars/'.basename($c['buyer_img']) : null;
+                        $cUserImg = $c['buyer_img'] ? $baseUrl . '/uploads/avatars/'.basename($c['buyer_img']) : null;
                         $roleTag = "SELLING";
                     } else {
                         $cName = trim($c['seller_fname'].' '.$c['seller_lname']) ?: 'Seller';
-                        $cUserImg = $c['seller_img'] ? '/uploads/avatars/'.basename($c['seller_img']) : null;
+                        $cUserImg = $c['seller_img'] ? $baseUrl . '/uploads/avatars/'.basename($c['seller_img']) : null;
                         $roleTag = "BUYING";
                     }
                     $productNamePreview = $c['product_name'] ?: 'Unknown Item';
@@ -171,7 +171,7 @@ function formatChatTimeMockup($datetimeStr) {
                         <!-- Avatar -->
                         <div class="w-14 h-14 rounded-full bg-slate-200 flex-shrink-0 overflow-hidden relative border border-slate-100/50 shadow-sm">
                             <?php if ($cUserImg): ?>
-                                <img src="<?= htmlspecialchars($cUserImg) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/assets/default.png';">
+                                <img src="<?= htmlspecialchars($cUserImg) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                             <?php else: ?>
                                 <span class="absolute inset-0 flex items-center justify-center font-bold text-slate-500 text-lg"><?= mb_substr($cName, 0, 1) ?></span>
                             <?php endif; ?>

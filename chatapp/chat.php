@@ -287,7 +287,7 @@ require_once __DIR__ . '/api/chat_controller.php';
                 let av = document.createElement('div');
                 av.className = 'w-8 h-8 rounded-full bg-slate-200 shrink-0 mb-4 overflow-hidden border border-slate-100 hidden sm:block';
                 <?php if($otherImg): ?>
-                    av.innerHTML = `<img src="<?= htmlspecialchars($otherImg) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/assets/default.png';">`;
+                    av.innerHTML = `<img src="<?= htmlspecialchars($otherImg) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">`;
                 <?php else: ?>
                      av.innerHTML = `<span class="w-full h-full flex items-center justify-center font-bold text-slate-500 text-xs"><?= mb_substr($otherName, 0, 1) ?></span>`;
                 <?php endif; ?>

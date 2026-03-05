@@ -105,7 +105,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                                         แบนผู้ใช้
                                     </button>
                                 <?php else: ?>
-                                    <form method="post" action="user_status_action.php" onsubmit="return confirm('ยืนยันการยกเลิกแบนผู้ใช้ <?= h($u['username']) ?> ?')">
+                                    <form method="post" action="controllers/user_status_action_controller.php" onsubmit="return confirm('ยืนยันการยกเลิกแบนผู้ใช้ <?= h($u['username']) ?> ?')">
                                         <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
                                         <input type="hidden" name="action" value="unban">
                                         <input type="hidden" name="user_id" value="<?= (int)$u['user_id'] ?>">
@@ -138,7 +138,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
     <!-- Modal Content -->
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
         <div class="relative bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-md w-full opacity-0 scale-95" id="banModalContent">
-            <form method="post" action="user_status_action.php">
+            <form method="post" action="controllers/user_status_action_controller.php">
                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg leading-6 font-bold text-slate-900">แบนผู้ใช้</h3>

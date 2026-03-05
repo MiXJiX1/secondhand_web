@@ -196,7 +196,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                                                 <p class="text-[10px] text-slate-500"><?= h($r['account_name']) ?></p>
                                             </div>
 
-                                            <form method="post" action="withdraw_action.php" enctype="multipart/form-data" class="space-y-2">
+                                            <form method="post" action="controllers/withdraw_action_controller.php" enctype="multipart/form-data" class="space-y-2">
                                                 <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
                                                 <input type="hidden" name="withdraw_id" value="<?= (int)$r['withdraw_id'] ?>">
                                                 <input type="hidden" name="action" value="mark_paid">
@@ -219,7 +219,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
 
                                         <!-- Reject Form -->
                                         <div x-show="openReject" x-cloak class="mt-2 p-2 bg-red-50 rounded-lg border border-red-100 text-left">
-                                            <form method="post" action="withdraw_action.php">
+                                            <form method="post" action="controllers/withdraw_action_controller.php">
                                                 <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
                                                 <input type="hidden" name="withdraw_id" value="<?= (int)$r['withdraw_id'] ?>">
                                                 <input type="hidden" name="action" value="reject">

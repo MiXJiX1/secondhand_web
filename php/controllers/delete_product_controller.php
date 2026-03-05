@@ -38,4 +38,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
     }
 }
 
-redirect($baseUrl . "/profile");
+redirect($baseUrl . "/my-products?success=deleted");

@@ -76,7 +76,7 @@ include __DIR__ . '/../includes/navbar_main.php';
                         <a href="<?= $baseUrl ?>/edit-product?id=<?= (int)$row['product_id'] ?>" class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:text-primary transition-colors tooltip tooltip-top" title="แก้ไข">
                             <span class="material-symbols-outlined">edit</span>
                         </a>
-                        <form action="<?= $baseUrl ?>/delete-product" method="POST" onsubmit="return confirm('ยืนยันการลบที่กู้คืนไม่ได้?');" class="inline">
+                        <form action="<?= $baseUrl ?>/delete-product" method="POST" class="inline delete-form">
                             <input type="hidden" name="csrf_token" value="<?= h($csrf) ?>">
                             <input type="hidden" name="product_id" value="<?= (int)$row['product_id'] ?>">
                             <button type="submit" class="w-10 h-10 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-colors tooltip tooltip-top" title="ลบสินค้า">
@@ -111,8 +111,45 @@ include __DIR__ . '/../includes/navbar_main.php';
 
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    // Tooltip logic can be added here if needed, or rely on native titles.
+document.addEventListener('DOMContentLoaded', function() {
+    // Check for success message
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'deleted') {
+        Swal.fire({
+            icon: 'success',
+            title: 'ลบสำเร็จ!',
+            text: 'ลบสินค้าออกจากระบบแล้ว',
+            timer: 2500,
+            showConfirmButton: false
+        });
+        // Clean URL after showing popup
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Attach SweetAlert to delete forms
+    const deleteForms = document.querySelectorAll('.delete-form');
+    deleteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'ยืนยันการลบ?',
+                text: "สินค้านี้จะถูกลบอย่างถาวรและไม่สามารถกู้คืนได้!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444', // red-500
+                cancelButtonColor: '#94a3b8', // slate-400
+                confirmButtonText: 'ยืนยัน ลบทันที',
+                cancelButtonText: 'ยกเลิก'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
 </script>
 </body>
 </html>

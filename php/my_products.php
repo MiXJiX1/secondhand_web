@@ -73,10 +73,10 @@ include __DIR__ . '/../includes/navbar_main.php';
                     
                     <!-- Hover Action Overlay -->
                     <div class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm <?= $isSold ? 'hidden' : '' ?>">
-                        <a href="edit_product.php?id=<?= (int)$row['product_id'] ?>" class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:text-primary transition-colors tooltip tooltip-top" title="แก้ไข">
+                        <a href="<?= $baseUrl ?>/edit-product?id=<?= (int)$row['product_id'] ?>" class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-slate-900 hover:text-primary transition-colors tooltip tooltip-top" title="แก้ไข">
                             <span class="material-symbols-outlined">edit</span>
                         </a>
-                        <form action="delete_product.php" method="POST" onsubmit="return confirm('ยืนยันการลบที่กู้คืนไม่ได้?');" class="inline">
+                        <form action="<?= $baseUrl ?>/delete-product" method="POST" onsubmit="return confirm('ยืนยันการลบที่กู้คืนไม่ได้?');" class="inline">
                             <input type="hidden" name="csrf_token" value="<?= h($csrf) ?>">
                             <input type="hidden" name="product_id" value="<?= (int)$row['product_id'] ?>">
                             <button type="submit" class="w-10 h-10 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center text-white transition-colors tooltip tooltip-top" title="ลบสินค้า">

@@ -45,6 +45,7 @@ switch ($path) {
     case 'my-products': require_once __DIR__ . '/php/my_products.php'; exit;
     case 'exchange':    require_once __DIR__ . '/php/exchange.php'; exit;
     case 'edit-exchange': require_once __DIR__ . '/php/edit_exchange.php'; exit;
+    case 'edit-product': require_once __DIR__ . '/php/edit_product.php'; exit;
     case 'delete-product': require_once __DIR__ . '/php/delete_product.php'; exit;
     case 'login':       require_once __DIR__ . '/php/login.php'; exit;
     case 'register':    require_once __DIR__ . '/php/register.php'; exit;

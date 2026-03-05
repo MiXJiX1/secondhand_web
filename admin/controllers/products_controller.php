@@ -8,9 +8,10 @@ require_once __DIR__ . "/../../config/database.php";
 $pdo->exec("SET NAMES utf8mb4");
 
 /* ---------- CSRF ---------- */
-if (empty($_SESSION['csrf'])) {
-  $_SESSION['csrf'] = bin2hex(random_bytes(16));
+if (empty($_SESSION['csrf_token'])) {
+  $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
 }
+$csrf = $_SESSION['csrf_token'];
 
 /* ---------- Flash (PRG) ---------- */
 $flash = $_SESSION['flash'] ?? null;
@@ -19,7 +20,7 @@ unset($_SESSION['flash']);
 /* ---------- Delete product (POST ในหน้านี้เลย) ---------- */
 if ($_SERVER['REQUEST_METHOD']==='POST' && (($_POST['action'] ?? '')==='delete_product')) {
   try {
-    if (!hash_equals($_SESSION['csrf'] ?? '', $_POST['csrf'] ?? '')) {
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
       throw new RuntimeException('CSRF ไม่ถูกต้อง');
     }
     $id = (int)($_POST['id'] ?? 0);

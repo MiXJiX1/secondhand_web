@@ -6,9 +6,8 @@ error_reporting(E_ALL);
 
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
-  header("Location: login.php");
-  exit;
+if (!isLoggedIn()) {
+  redirect($baseUrl . "/login");
 }
 
 /* ===== DB (ใช้ config กลาง) ===== */
@@ -62,12 +61,12 @@ $AR_HAS_TARGET   = ar_has($pdo,'target_id') && ar_has($pdo,'target_kind'); // �
 
 
 /* ---------- CSRF ---------- */
-if (empty($_SESSION['csrf_fb'])) $_SESSION['csrf_fb'] = bin2hex(random_bytes(16));
-$csrf = $_SESSION['csrf_fb'];
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
+$csrf = $_SESSION['csrf_token'];
 
 /* ---------- ส่งฟอร์ม ---------- */
 $msg = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && hash_equals($csrf, $_POST['csrf'] ?? '')) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'] ?? '')) {
 
   /* ให้คะแนน */
   if ($_POST['action'] === 'rate') {

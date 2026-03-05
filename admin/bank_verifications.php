@@ -189,8 +189,8 @@ function confirmAction(action, userId) {
             
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';
-            csrfInput.name = 'csrf';
-            csrfInput.value = '<?= $_SESSION['csrf'] ?>';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = '<?= $_SESSION['csrf_token'] ?>';
             
             const actionInput = document.createElement('input');
             actionInput.type = 'hidden';

@@ -30,6 +30,7 @@ require_once __DIR__ . '/controllers/edit_profile_controller.php';
       <div class="card-body">
         <h5 class="mb-3 fw-bold">ข้อมูลบัญชี</h5>
         <form method="POST" novalidate>
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken ?? '', ENT_QUOTES, 'UTF-8') ?>">
           <div class="mb-3">
             <label class="form-label">ชื่อผู้ใช้</label>
             <input type="text" name="username" class="form-control" required

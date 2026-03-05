@@ -4,6 +4,21 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
-# Rewrite everything else to index.php
-# This will catch URLs like /product/view/1 and send them to index.php?path=product/view/1
+# 1. Product Details
+RewriteRule ^product/([0-9]+)$ php/product_detail.php?product_id=$1 [QSA,L]
+
+# 2. Common Pages
+RewriteRule ^sell$ php/sell.php [L]
+RewriteRule ^chat$ chatapp/chat_list.php [L]
+RewriteRule ^profile$ php/profile.php [L]
+RewriteRule ^topup$ php/topup.php [L]
+RewriteRule ^my-products$ php/my_products.php [L]
+RewriteRule ^exchange$ php/exchange.php [L]
+
+# 3. Auth
+RewriteRule ^login$ php/login.php [L]
+RewriteRule ^register$ php/register.php [L]
+RewriteRule ^logout$ php/logout.php [L]
+
+# Fallback
 RewriteRule ^(.*)$ index.php?path=$1 [QSA,L]

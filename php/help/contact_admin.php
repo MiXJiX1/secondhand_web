@@ -45,7 +45,7 @@ $flash = null;
 /* ===== POST: สร้างทิกเก็ต ===== */
 if ($_SERVER['REQUEST_METHOD']==='POST' && ($_POST['action'] ?? '')==='create' ) {
   try{
-    if (!hash_equals($CSRF, $_POST['csrf'] ?? '')) throw new RuntimeException('CSRF ไม่ถูกต้อง');
+    if (!hash_equals($CSRF, $_POST['csrf_token'] ?? '')) throw new RuntimeException('CSRF ไม่ถูกต้อง');
 
     $category = $_POST['category'] ?? 'other';
     if (!in_array($category, ['account','payment','bug','abuse','other'], true)) $category = 'other';
@@ -146,7 +146,7 @@ if(!function_exists('h')){ function h($s){ return htmlspecialchars((string)$s, E
 
       <form method="post" enctype="multipart/form-data">
         <input type="hidden" name="action" value="create">
-        <input type="hidden" name="csrf" value="<?= h($CSRF) ?>">
+        <input type="hidden" name="csrf_token" value="<?= h($CSRF) ?>">
 
         <label>ประเภทปัญหา</label>
         <select name="category" required>

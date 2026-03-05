@@ -210,7 +210,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                         <!-- Modal Footer/Actions -->
                         <div class="px-6 py-4 border-t border-slate-100 bg-slate-50 shrink-0">
                             <form method="post" class="flex flex-col sm:flex-row items-center gap-3 w-full justify-end">
-                                <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
+                                <input type="hidden" name="csrf_token" value="<?= h($csrf) ?>">
                                 <input type="hidden" name="ticket_id" value="<?= $id ?>">
                                 <input type="hidden" name="action" value="set_status">
                                 

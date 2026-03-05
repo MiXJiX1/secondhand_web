@@ -12,8 +12,8 @@ if (empty($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   header('Location: users.php'); exit();
 }
-if (!isset($_POST['csrf']) || !hash_equals($_SESSION['csrf'] ?? '', $_POST['csrf'])) {
-  http_response_code(400); die('CSRF invalid');
+if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+  throw new Exception('CSRF invalid', 400);
 }
 
 require_once __DIR__ . "/../../config/database.php";
@@ -97,7 +97,5 @@ try {
 
 } catch (Throwable $e) {
   if ($pdo->inTransaction()) $pdo->rollBack();
-  if (!headers_sent()) header('Location: users.php?err=1');
-  else echo "Error: ".htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
-  exit();
+  throw $e;
 }

@@ -1,35 +1,12 @@
 <?php
 session_start();
-$user_id = $_SESSION['user_id'] ?? null;
-if (!$user_id) {
-    header("Location: login.php");
-    exit;
+if (!isLoggedIn()) {
+    redirect($baseUrl . '/login');
 }
+$user_id = (int)$_SESSION['user_id'];
 
 // โหลดค่าคงที่ DB / Token ต่างๆ
 require_once __DIR__ . "/../../config/database.php";
-
-// PDO is provided by database.php
-if (!isset($pdo)) {
-    http_response_code(500);
-    exit('Database connection error');
-}
-
-if (!function_exists('allImagesFromField')) {
-    function allImagesFromField(?string $s): array {
-        if (!$s) return [];
-        $s = trim($s);
-        if ($s !== '' && $s[0] === '[') {
-            $arr = json_decode($s, true);
-            if (is_array($arr)) {
-                return array_values(array_filter(array_map(fn($x)=>basename((string)$x), $arr)));
-            }
-        }
-        $parts = preg_split('/[|,;]+/', $s, -1, PREG_SPLIT_NO_EMPTY);
-        if ($parts) return array_values(array_filter(array_map(fn($x)=>basename(trim($x)), $parts)));
-        return [basename($s)];
-    }
-}
 
 $categories = [
     'electronics'=>'อุปกรณ์อิเล็กทรอนิกส์','fashion'=>'แฟชั่น','furniture'=>'เฟอร์นิเจอร์',
@@ -43,8 +20,7 @@ $stmt = $pdo->prepare("SELECT * FROM products WHERE product_id=? AND user_id=? L
 $stmt->execute([$productId, $user_id]);
 $prod = $stmt->fetch();
 if (!$prod) {
-    http_response_code(404);
-    exit("ไม่พบสินค้าหรือไม่มีสิทธิ์แก้ไข");
+    throw new Exception("ไม่พบสินค้าหรือไม่มีสิทธิ์แก้ไข", 404);
 }
 
 $successMsg = $errorMsg = "";
@@ -70,15 +46,9 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['product_name'])) {
             $cat = 'others';
         }
 
-        // เตรียมโฟลเดอร์อัปโหลด (อยู่ข้างบนโฟลเดอร์นี้สองระดับ: ../../uploads)
+        // เตรียมโฟลเดอร์อัปโหลด
         $uploadDir = rtrim(__DIR__ . '/../../uploads', '/\\') . DIRECTORY_SEPARATOR;
-        if (!is_dir($uploadDir)) {
-            @mkdir($uploadDir, 0777, true);
-        }
-        if (!is_dir($uploadDir) || !is_writable($uploadDir)) {
-            $errorMsg = "ไม่สามารถเขียนโฟลเดอร์ uploads ได้";
-        }
-
+        
         $allowed = ['jpg','jpeg','png','webp','gif'];
         $oldImages = allImagesFromField($prod['product_image']);
         $newImages = [];
@@ -92,7 +62,6 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['product_name'])) {
                 $ext = strtolower(pathinfo($fname, PATHINFO_EXTENSION));
                 if (!in_array($ext, $allowed, true)) continue;
 
-                // จำกัดขนาดไฟล์ (เช่น 5MB)
                 if (!empty($_FILES['images']['size'][$i]) && $_FILES['images']['size'][$i] > 5 * 1024 * 1024) {
                     continue;
                 }
@@ -115,12 +84,12 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['product_name'])) {
         if (empty($errorMsg)) {
             if (!empty($_POST['replace_images'])) {
                 foreach ($oldImages as $old) {
-                    $p = $uploadDir.$old;
+                    $p = $uploadDir.basename($old);
                     if ($old && is_file($p)) @unlink($p);
                 }
                 $finalImages = $newImages;
             } else {
-                $finalImages = array_values(array_unique(array_merge($oldImages, $newImages)));
+                $finalImages = array_values(array_unique(array_merge(array_map('basename', $oldImages), $newImages)));
             }
 
             $imgField = (count($finalImages) > 1)
@@ -141,20 +110,18 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['product_name'])) {
                 $ok = $upd->execute([$name,$price,$cat,$desc,$imgField,$loc,$locName,$status,$productId,$user_id]);
             } catch (Throwable $e) {
                 $ok = false;
-                error_log("UPDATE products failed: " . $e->getMessage());
             }
 
             if ($ok) {
-                // Log status change if any
                 if ($status !== $prod['status']) {
                     $statusName = $status === 'sold' ? 'ปิดการขาย' : ($status === 'hidden' ? 'ซ่อน' : 'เปิดขาย');
-                    $desc = "เปลี่ยนสถานะสินค้า \"{$name}\" เป็น {$statusName}";
+                    $logDesc = "เปลี่ยนสถานะสินค้า \"{$name}\" เป็น {$statusName}";
                     $logSql = "INSERT INTO activity_logs (user_id, username, action_type, description) VALUES (?, (SELECT username FROM users WHERE user_id=? LIMIT 1), 'toggle_product', ?)";
-                    $pdo->prepare($logSql)->execute([$user_id, $user_id, $desc]);
+                    $pdo->prepare($logSql)->execute([$user_id, $user_id, $logDesc]);
                 }
 
                 $successMsg = "บันทึกสำเร็จ";
-                // sync ตัวแปร $prod ที่แสดงบนหน้า
+                // sync ตัวแปร $prod
                 $prod['product_name']  = $name;
                 $prod['product_price'] = $price;
                 $prod['category']      = $cat;
@@ -162,6 +129,8 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['product_name'])) {
                 $prod['product_image'] = $imgField;
                 $prod['location_name'] = $locName;
                 $prod['status']        = $status;
+                
+                redirect($baseUrl . "/product/" . $productId);
             } else {
                 $errorMsg = "บันทึกไม่สำเร็จ";
             }

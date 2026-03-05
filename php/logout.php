@@ -1,6 +1,6 @@
 <?php
 session_start();
-session_destroy(); // Destroy all session data
-header("Location: ../index.php"); // Redirect to homepage after logout
-exit;
+session_destroy();
+require_once __DIR__ . "/../config/database.php";
+redirect($baseUrl . "/");
 ?>

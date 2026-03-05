@@ -2,7 +2,9 @@
 session_start();
 require_once __DIR__ . '/../config/database.php';
 
-if (!isset($_SESSION['user_id'])) { header("Location: ../php/login.php"); exit; }
+if (!isLoggedIn()) {
+    redirect('../login');
+}
 $me = (int)$_SESSION['user_id'];
 
 // --- NEW CHAT INITIATION LOGIC ---
@@ -12,51 +14,34 @@ $sellerUserId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
 
 if ($requestId === '' && $productId > 0 && $sellerUserId > 0) {
     if ($me === $sellerUserId) {
-        die("คุณไม่สามารถแชทกับตัวเองได้");
+        throw new Exception("คุณไม่สามารถแชทกับตัวเองได้", 400);
     }
     
     // Check if a request already exists
-    $checkReq = $conn->prepare("SELECT request_id FROM chat_requests WHERE product_id = ? AND ( (buyer_id = ? AND seller_id = ?) OR (buyer_id = ? AND seller_id = ?) ) LIMIT 1");
-    $checkReq->bind_param("iiiii", $productId, $me, $sellerUserId, $sellerUserId, $me);
-    $checkReq->execute();
-    $existingReq = $checkReq->get_result()->fetch_assoc();
+    $checkReq = $pdo->prepare("SELECT request_id FROM chat_requests WHERE product_id = ? AND ( (buyer_id = ? AND seller_id = ?) OR (buyer_id = ? AND seller_id = ?) ) LIMIT 1");
+    $checkReq->execute([$productId, $me, $sellerUserId, $sellerUserId, $me]);
+    $existingReq = $checkReq->fetch();
     
     if ($existingReq) {
         $requestId = $existingReq['request_id'];
     } else {
         // Create new request
         $requestId = 'REQ_' . bin2hex(random_bytes(8));
-        $insReq = $conn->prepare("INSERT INTO chat_requests (request_id, product_id, buyer_id, seller_id) VALUES (?, ?, ?, ?)");
-        $insReq->bind_param("siii", $requestId, $productId, $me, $sellerUserId);
-        $insReq->execute();
+        $insReq = $pdo->prepare("INSERT INTO chat_requests (request_id, product_id, buyer_id, seller_id) VALUES (?, ?, ?, ?)");
+        $insReq->execute([$requestId, $productId, $me, $sellerUserId]);
     }
     // Redirect to self with requestId to trigger autoload and clean URL
-    header("Location: chat_list.php?request_id=" . urlencode($requestId) . "&product_id=" . $productId);
-    exit;
+    redirect("chat?request_id=" . urlencode($requestId) . "&product_id=" . $productId);
 }
 // ----------------------------------
 
 // Get user info for sidebar
-$stmt_me = $conn->prepare("SELECT fname, lname, img FROM users WHERE user_id = ? LIMIT 1");
-$stmt_me->bind_param("i", $me);
-$stmt_me->execute();
-$myInfo = $stmt_me->get_result()->fetch_assoc();
+$stmt_me = $pdo->prepare("SELECT fname, lname, img FROM users WHERE user_id = ? LIMIT 1");
+$stmt_me->execute([$me]);
+$myInfo = $stmt_me->fetch();
 $myName = trim(($myInfo['fname']??'').' '.($myInfo['lname']??''));
 $myAvatarText = mb_substr($myName, 0, 1) ?: 'U';
-$myAvatarUrl = !empty($myInfo['img']) && $myInfo['img']!=='default.png' ? '/uploads/avatars/'.basename($myInfo['img']) : null;
-
-
-function firstImageFromField(?string $s): ?string {
-    if (!$s) return null;
-    $s = trim($s);
-    if ($s !== '' && $s[0] === '[') {
-        $arr = json_decode($s, true);
-        if (is_array($arr) && !empty($arr)) return basename((string)$arr[0]);
-    }
-    $parts = preg_split('/[|,;]+/', $s, -1, PREG_SPLIT_NO_EMPTY);
-    if ($parts && isset($parts[0])) return basename(trim($parts[0]));
-    return basename($s);
-}
+$myAvatarUrl = !empty($myInfo['img']) && $myInfo['img']!=='default.png' ? $baseUrl . '/uploads/avatars/'.basename($myInfo['img']) : null;
 
 // Fetch all chats
 $sql = "
@@ -75,12 +60,11 @@ LEFT JOIN users ub    ON cr.buyer_id   = ub.user_id
 WHERE cr.seller_id = ? OR cr.buyer_id = ?
 ORDER BY m1.created_at DESC";
 
-$stmt = $conn->prepare($sql); // $conn is provided by database.php
-$stmt->bind_param("iii", $me, $me, $me);
-$stmt->execute();
-$allChats = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt = $pdo->prepare($sql); 
+$stmt->execute([$me, $me, $me]);
+$allChats = $stmt->fetchAll();
 
-// Format Time helper (Mockup style: '2M AGO', '1H AGO', 'FEB 12')
+// Format Time helper
 function formatChatTimeMockup($datetimeStr) {
     if (!$datetimeStr) return '';
     $ts = strtotime($datetimeStr);

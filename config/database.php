@@ -1,59 +1,53 @@
 <?php
-// includes/config.php
+// config/database.php
+require_once __DIR__ . '/../vendor/autoload.php';
 
-const DB_HOST = 'localhost';
-const DB_USER = 'root';
-const DB_PASS = '';
-const DB_NAME = 'secondhand_web';
+// Load environment variables
+try {
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+    $dotenv->load();
+} catch (Exception $e) {
+    // If .env is missing in production, we might rely on actual environment variables
+}
 
-const PROMPTPAY_ID     = '0931898053'; // PromptPay
-const RECEIVER_BANK_ID = '004';        // KBank = 004 
-const INTERNAL_API_KEY = '2708758b587a625aefee31dcc4cd2b479c8e799a3fbcae4340d15bbb977bbfdf'; 
+define('DB_HOST', $_ENV['DB_HOST'] ?? 'localhost');
+define('DB_USER', $_ENV['DB_USER'] ?? 'root');
+define('DB_PASS', $_ENV['DB_PASS'] ?? '');
+define('DB_NAME', $_ENV['DB_NAME'] ?? 'secondhand_web');
 
-define('PAYMENT_MODE', 'development'); // 'production' | 'sandbox' | 'disabled'
-define('MSUPAY_ENDPOINT', 'https://<REAL_MSUPAY_GATEWAY>/checkout'); // ของจริงเท่านั้น
+define('PROMPTPAY_ID',     $_ENV['PROMPTPAY_ID'] ?? '');
+define('RECEIVER_BANK_ID', $_ENV['RECEIVER_BANK_ID'] ?? '');
+define('INTERNAL_API_KEY', $_ENV['INTERNAL_API_KEY'] ?? '');
+
+define('PAYMENT_MODE', $_ENV['PAYMENT_MODE'] ?? 'development'); 
+define('MSUPAY_ENDPOINT', $_ENV['MSUPAY_ENDPOINT'] ?? '');
+define('MSUPAY_MERCHANT_ID', $_ENV['MSUPAY_MERCHANT_ID'] ?? '');
+define('MSUPAY_SECRET', $_ENV['MSUPAY_SECRET'] ?? '');
 
 // Calculate dynamic Base URL
-$scriptName = $_SERVER['SCRIPT_NAME']; 
-// If estamos en /php/xxx.php, dirname is /php, we want the root
-// Actually, it's safer to use a more robust way or just copy from twig.php but adjust
+$scriptName = $_SERVER['SCRIPT_NAME'] ?? ''; 
 $baseUrl = rtrim(dirname($scriptName), '/\\');
-// If we are in a subdirectory like /php/ or /ChatApp/, we need to go up
-if (basename(dirname($_SERVER['PHP_SELF'])) == 'php' || basename(dirname($_SERVER['PHP_SELF'])) == 'ChatApp' || basename(dirname($_SERVER['PHP_SELF'])) == 'help') {
+$phpSelf = $_SERVER['PHP_SELF'] ?? '';
+$dirName = basename(dirname($phpSelf));
+if (in_array($dirName, ['php', 'ChatApp', 'chatapp', 'help', 'api', 'admin'])) {
     $baseUrl = rtrim(dirname(dirname($scriptName)), '/\\');
 }
-if ($baseUrl === '\\') $baseUrl = '';
+if ($baseUrl === '\\' || $baseUrl === '/') $baseUrl = '';
 
-/**
- * Global Helper for safe HTML output (UTF-8)
- */
-function h($s) {
-    if ($s === null) return '';
-    return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
-}
+// 0) Initialize ErrorHandler & Helpers
+require_once __DIR__ . '/../includes/ErrorHandler.php';
+require_once __DIR__ . '/../includes/helpers.php';
+ErrorHandler::initialize();
 
-// 1) Establish MySQLi connection ($conn)
-try {
-    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-     $mysqli = $conn; 
-     $conn->set_charset("utf8mb4");
- } catch (Exception $e) {
-    die("Database connection failed (mysqli): " . $e->getMessage());
-}
-
-// 2) Establish PDO connection ($pdo)
-$dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+// 1) Establish PDO connection ($pdo)
+$dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . ($_ENV['DB_CHARSET'] ?? 'utf8mb4');
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, 
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
 ];
 try {
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
 } catch (PDOException $e) {
-    die("Database connection failed (PDO): " . $e->getMessage());
+    throw new Exception("Database connection failed: " . $e->getMessage());
 }
-// MSUPAY Configuration
-define('MSUPAY_MERCHANT_ID', 'YOUR_MERCHANT_ID');
-define('MSUPAY_SECRET', 'YOUR_SECRET_KEY');
-// Probable old PROMPTPAY_ID removed
- // From topup_process.php observation

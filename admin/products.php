@@ -101,7 +101,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                             <!-- Dropdown -->
                             <div class="dropdown-menu hidden absolute right-0 bottom-full mb-2 w-36 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50 text-left">
                                 <form method="post" onsubmit="return confirm('ยืนยันลบสินค้านี้?')">
-                                    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                                     <input type="hidden" name="action" value="delete_product">
                                     <input type="hidden" name="id" value="<?= (int)$p['product_id'] ?>">
                                     <button class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium flex items-center gap-2" type="submit">
@@ -178,7 +178,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                             <!-- Dropdown -->
                             <div class="dropdown-menu hidden absolute right-8 top-10 w-36 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50 text-left">
                                 <form method="post" onsubmit="return confirm('ยืนยันลบสินค้านี้?')">
-                                    <input type="hidden" name="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+                                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
                                     <input type="hidden" name="action" value="delete_product">
                                     <input type="hidden" name="id" value="<?= (int)$p['product_id'] ?>">
                                     <button class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors font-medium flex items-center gap-2" type="submit">

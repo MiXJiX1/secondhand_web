@@ -4,8 +4,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once __DIR__ . "/../../config/database.php";
-if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
+if (!isLoggedIn()) {
+    redirect($baseUrl . "/login");
+}
 
 $userId = (int)$_SESSION['user_id'];
 
@@ -16,31 +17,19 @@ $bal = (float)($st->fetchColumn() ?? 0);
 $st->closeCursor();
 
 // User info for Navbar
-$currentUserId = $userId;
 $userDisplayName = '';
 $userAvatarImage = '';
 $userAvatarText = '🙂';
-$isVerified = false;
 
 $stmtNav = $pdo->prepare("SELECT * FROM users WHERE user_id = ? LIMIT 1");
-$stmtNav->execute([$currentUserId]);
+$stmtNav->execute([$userId]);
 $u = $stmtNav->fetch();
 if ($u) {
-    // Determine Verified status (Mock property for UI if not in DB)
-    $isVerified = true; 
-    
-    $userAvatarImage = !empty($u['img']) ? '../uploads/avatars/'.basename($u['img']) : '';
+    $userAvatarImage = !empty($u['img']) ? $baseUrl . '/uploads/avatars/'.basename($u['img']) : '';
     $fn = trim((string)($u['fname'] ?? ''));
     $ln = trim((string)($u['lname'] ?? ''));
-    if ($fn !== '' || $ln !== '') {
-        $userDisplayName = trim($fn . ' ' . $ln);
-    } else {
-        $userDisplayName = (string)($u['username'] ?? ($_SESSION['username'] ?? ''));
-    }
-    $parts = preg_split('/\s+/', $userDisplayName, -1, PREG_SPLIT_NO_EMPTY);
-    if ($parts) {
-        $userAvatarText = mb_substr($parts[0], 0, 1, 'UTF-8') . (isset($parts[1]) ? mb_substr($parts[1], 0, 1, 'UTF-8') : '');
-    }
+    $userDisplayName = ($fn !== '' || $ln !== '') ? trim($fn . ' ' . $ln) : (string)($u['username'] ?? '');
+    $userAvatarText = mb_substr($userDisplayName, 0, 1) ?: 'U';
 }
 $stmtNav->closeCursor();
 

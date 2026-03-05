@@ -3,7 +3,7 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
+if (!isLoggedIn()) {
     echo json_encode(['ok' => false, 'error' => 'unauthorized']);
     exit;
 }
@@ -64,14 +64,13 @@ if (move_uploaded_file($file['tmp_name'], $targetPath)) {
 
     try {
         if ($isExchange) {
-            $stmt = $conn->prepare("INSERT INTO exchange_messages (request_id, sender_id, message, created_at) VALUES (?, ?, ?, NOW())");
-            $stmt->bind_param("sis", $requestId, $userId, $messageText);
+            $stmt = $pdo->prepare("INSERT INTO exchange_messages (request_id, sender_id, message, created_at) VALUES (?, ?, ?, NOW())");
+            $stmt->execute([$requestId, $userId, $messageText]);
         } else {
             // Need buyer/seller/product info
-            $q = $conn->prepare("SELECT seller_id, buyer_id, product_id FROM chat_requests WHERE request_id = ? LIMIT 1");
-            $q->bind_param("s", $requestId);
-            $q->execute();
-            $req = $q->get_result()->fetch_assoc();
+            $q = $pdo->prepare("SELECT seller_id, buyer_id, product_id FROM chat_requests WHERE request_id = ? LIMIT 1");
+            $q->execute([$requestId]);
+            $req = $q->fetch();
             
             if (!$req) {
                  echo json_encode(['ok' => false, 'error' => 'Chat request not found']);
@@ -83,17 +82,13 @@ if (move_uploaded_file($file['tmp_name'], $targetPath)) {
             $pId = (int)$req['product_id'];
             $receiverId = ($userId === $sellerId) ? $buyerId : $sellerId;
 
-            $stmt = $conn->prepare("INSERT INTO messages (request_id, product_id, sender_id, receiver_id, message, is_read, created_at, sent_at) VALUES (?, ?, ?, ?, ?, 0, NOW(), NOW())");
-            $stmt->bind_param("siiis", $requestId, $pId, $userId, $receiverId, $messageText);
+            $stmt = $pdo->prepare("INSERT INTO messages (request_id, product_id, sender_id, receiver_id, message, is_read, created_at, sent_at) VALUES (?, ?, ?, ?, ?, 0, NOW(), NOW())");
+            $stmt->execute([$requestId, $pId, $userId, $receiverId, $messageText]);
         }
 
-        if ($stmt->execute()) {
-            echo json_encode(['ok' => true, 'filename' => $filename]);
-        } else {
-            echo json_encode(['ok' => false, 'error' => 'Database error: ' . $stmt->error]);
-        }
+        echo json_encode(['ok' => true, 'filename' => $filename]);
     } catch (Throwable $e) {
-        echo json_encode(['ok' => false, 'error' => 'Server error: ' . $e->getMessage()]);
+        echo json_encode(['ok' => false, 'error' => 'Database error: ' . $e->getMessage()]);
     }
 } else {
     echo json_encode(['ok' => false, 'error' => 'Failed to move uploaded file']);

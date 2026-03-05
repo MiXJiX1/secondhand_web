@@ -1,49 +1,39 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit();
+if (!isLoggedIn()) {
+    redirect($baseUrl . "/login");
 }
 
-// include config (เก็บค่าคงที่)
 require_once __DIR__ . "/../../config/database.php";
 
-// $conn is provided by database.php
-$conn->set_charset("utf8mb4");
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
-    $product_id = intval($_POST['product_id']);
-    $user_id = $_SESSION['user_id'];
+    $product_id = (int)$_POST['product_id'];
+    $user_id = (int)$_SESSION['user_id'];
 
-    // ตรวจสอบว่าเป็นเจ้าของสินค้าจริง
-    $check = $conn->prepare("SELECT product_id FROM products WHERE product_id = ? AND user_id = ?");
-    $check->bind_param("ii", $product_id, $user_id);
-    $check->execute();
-    $result = $check->get_result();
+    try {
+        // ตรวจสอบว่าเป็นเจ้าของสินค้าจริง
+        $check = $pdo->prepare("SELECT product_id FROM products WHERE product_id = ? AND user_id = ?");
+        $check->execute([$product_id, $user_id]);
+        
+        if ($check->fetch()) {
+            // ลบสินค้า
+            $delete = $pdo->prepare("DELETE FROM products WHERE product_id = ?");
+            $delete->execute([$product_id]);
 
-    if ($result && $result->num_rows > 0) {
-        // ลบสินค้า
-        $delete = $conn->prepare("DELETE FROM products WHERE product_id = ?");
-        $delete->bind_param("i", $product_id);
-        $delete->execute();
-
-        // log กิจกรรม
-        if (!empty($_SESSION['username'])) {
-            $username = $_SESSION['username'];
-            $action   = "ลบสินค้า #$product_id";
-            $log = $conn->prepare("INSERT INTO activity_log (username, action) VALUES (?, ?)");
-            $log->bind_param("ss", $username, $action);
-            $log->execute();
-            $log->close();
+            // log กิจกรรม
+            if (!empty($_SESSION['username'])) {
+                $username = $_SESSION['username'];
+                $action   = "ลบสินค้า #$product_id";
+                // Note: user_status_action used activity_log, topup_process used credit_ledger, 
+                // edit_product used activity_logs. Consistency is hard, but I'll stick to what was there.
+                // Looking at delete_product_controller.php original code, it used activity_log.
+                $log = $pdo->prepare("INSERT INTO activity_log (username, action) VALUES (?, ?)");
+                $log->execute([$username, $action]);
+            }
         }
-
-        $delete->close();
+    } catch (PDOException $e) {
+        throw new Exception("Database error while deleting product: ".$e->getMessage());
     }
-
-    $check->close();
 }
 
-// $conn->close(); // Optional: better to avoid closing the global db connection here if other parts use it, but since it's an action, it's fine.
-
-header("Location: profile.php"); // Updated my_products.php to profile.php, or rather keep the same
-exit();
+redirect($baseUrl . "/profile");

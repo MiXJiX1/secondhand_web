@@ -143,7 +143,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                             </div>
                             
                             <div class="p-6">
-                                <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                                 <input type="hidden" name="appeal_id" value="<?= $id ?>">
                                 
                                 <div class="mb-4">

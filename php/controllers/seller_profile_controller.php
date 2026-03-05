@@ -5,8 +5,7 @@ require_once __DIR__ . "/../../config/database.php";
 $seller_id = (int)($_GET['id'] ?? 0);
 
 if ($seller_id <= 0) {
-    header("Location: ../index.php");
-    exit;
+    redirect($baseUrl . "/");
 }
 
 // Fetch Seller Data
@@ -20,10 +19,10 @@ if (!$seller) {
     exit;
 }
 
-$avatarPath = !empty($seller['img']) ? '../uploads/avatars/'.basename($seller['img']) : '../assets/no-avatar.png';
-$fullName = trim($seller['fname'] . ' ' . $seller['lname']) ?: $seller['username'];
+$avatarPath = !empty($seller['img']) ? $baseUrl . '/uploads/avatars/'.basename($seller['img']) : $baseUrl . '/assets/no-avatar.png';
+$fullName = trim(($seller['fname']??'') . ' ' . ($seller['lname']??'')) ?: h((string)$seller['username']);
 $joinDateTh = date('M Y', strtotime($seller['created_at']));
-$location = "Thailand"; // Fixed location as per design
+$location = "Thailand"; 
 
 // Fetch Stats (Active Listings, Items Sold)
 $stStats = $pdo->prepare("SELECT COUNT(CASE WHEN status='active' THEN 1 END) as active_count, COUNT(CASE WHEN status='sold' THEN 1 END) as sold_count FROM products WHERE user_id = ?");
@@ -45,28 +44,19 @@ $stProds->execute([$seller_id]);
 $products = $stProds->fetchAll();
 
 // For Navbar
-$currentUserId = $_SESSION['user_id'] ?? 0;
-// Fetch current user details for navbar if logged in
 $userDisplayName = '';
 $userAvatarImage = '';
 $userAvatarText = '🙂';
-if ($currentUserId > 0) {
-    if ($stmtNav = $pdo->prepare("SELECT * FROM users WHERE user_id = ? LIMIT 1")) {
-        $stmtNav->execute([$currentUserId]);
-        $u = $stmtNav->fetch();
-        if ($u) {
-            $userAvatarImage = !empty($u['img']) ? '../uploads/avatars/'.basename($u['img']) : '';
-            $fn = trim((string)($u['fname'] ?? ''));
-            $ln = trim((string)($u['lname'] ?? ''));
-            if ($fn !== '' || $ln !== '') {
-                $userDisplayName = trim($fn . ' ' . $ln);
-            } else {
-                $userDisplayName = (string)($u['username'] ?? ($_SESSION['username'] ?? ''));
-            }
-            $parts = preg_split('/\s+/', $userDisplayName, -1, PREG_SPLIT_NO_EMPTY);
-            if ($parts) {
-                $userAvatarText = mb_substr($parts[0], 0, 1, 'UTF-8') . (isset($parts[1]) ? mb_substr($parts[1], 0, 1, 'UTF-8') : '');
-            }
-        }
+if (isLoggedIn()) {
+    $currentUserId = (int)$_SESSION['user_id'];
+    $stmtNav = $pdo->prepare("SELECT * FROM users WHERE user_id = ? LIMIT 1");
+    $stmtNav->execute([$currentUserId]);
+    $u = $stmtNav->fetch();
+    if ($u) {
+        $userAvatarImage = !empty($u['img']) ? $baseUrl . '/uploads/avatars/'.basename($u['img']) : '';
+        $fn = trim((string)($u['fname'] ?? ''));
+        $ln = trim((string)($u['lname'] ?? ''));
+        $userDisplayName = ($fn !== '' || $ln !== '') ? trim($fn . ' ' . $ln) : (string)($u['username'] ?? '');
+        $userAvatarText = mb_substr($userDisplayName, 0, 1) ?: 'U';
     }
 }

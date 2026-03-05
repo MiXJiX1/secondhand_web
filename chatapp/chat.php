@@ -37,7 +37,7 @@ require_once __DIR__ . '/api/chat_controller.php';
 
     <!-- Navbar -->
     <header class="h-[72px] bg-white border-b border-slate-100 flex items-center px-4 md:px-8 flex-shrink-0 z-10 shadow-sm relative w-full">
-        <a href="chat_list.php" 
+        <a href="<?= $baseUrl ?>/chat" 
            <?= $isPartial ? 'onclick="if(window.closeMobileChat) { window.closeMobileChat(); return false; }"' : '' ?>
            class="text-slate-500 hover:text-slate-900 p-2 -ml-2 rounded-lg hover:bg-slate-100 shrink-0 mr-4 md:hidden">
             <span class="material-symbols-outlined">arrow_back</span>
@@ -58,7 +58,7 @@ require_once __DIR__ . '/api/chat_controller.php';
             <?php if ($requestId !== ''): ?>
             <div class="relative w-11 h-11 rounded-full bg-slate-200 overflow-hidden flex-shrink-0 border border-slate-100 ring-2 ring-white">
                 <?php if ($otherImg): ?>
-                    <img src="<?= htmlspecialchars($otherImg) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='/assets/default.png';">
+                    <img src="<?= h($otherImg) ?>" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
                 <?php else: ?>
                     <span class="absolute inset-0 flex items-center justify-center font-bold text-slate-500"><?= mb_substr($otherName, 0, 1) ?></span>
                 <?php endif; ?>
@@ -66,7 +66,7 @@ require_once __DIR__ . '/api/chat_controller.php';
                 <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full z-10"></div>
             </div>
             <div class="truncate">
-                <h2 class="font-bold text-[17px] text-slate-900 leading-tight truncate"><?= htmlspecialchars($otherName) ?></h2>
+                <h2 class="font-bold text-[17px] text-slate-900 leading-tight truncate"><?= h($otherName) ?></h2>
                 <p class="text-[12px] text-slate-400 font-medium">Active now</p>
             </div>
             <?php else: ?>
@@ -76,15 +76,15 @@ require_once __DIR__ . '/api/chat_controller.php';
 
         <!-- Product Link Box (Right side of header) -->
         <?php if ($productId > 0): ?>
-        <a href="../php/product_detail.php?id=<?= $productId ?>" class="hidden sm:flex items-center gap-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl p-1.5 pr-4 transition-colors max-w-[280px] shadow-sm ml-4">
+        <a href="<?= $baseUrl ?>/product/<?= $productId ?>" class="hidden sm:flex items-center gap-3 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl p-1.5 pr-4 transition-colors max-w-[280px] shadow-sm ml-4">
             <?php if ($activeProductImgUrl): ?>
-                <img src="<?= htmlspecialchars($activeProductImgUrl) ?>" class="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100" onerror="this.onerror=null; this.src='/assets/default.png';">
+                <img src="<?= h($activeProductImgUrl) ?>" class="w-10 h-10 object-cover rounded-lg shadow-sm border border-slate-100" onerror="this.onerror=null; this.src='<?= $baseUrl ?>/assets/default.png';">
             <?php else: ?>
                 <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-slate-300 text-sm">image</span></div>
             <?php endif; ?>
             <div class="flex-1 min-w-0 pr-2">
-                <p class="text-[12px] font-bold text-slate-800 truncate mb-0.5"><?= htmlspecialchars($chatProductName) ?></p>
-                <p class="text-[11px] font-black text-slate-900 bg-primary/20 px-1.5 py-0.5 rounded inline-block">฿<?= number_format($productPrice) ?></p>
+                <p class="text-[12px] font-bold text-slate-800 truncate mb-0.5"><?= h($chatProductName) ?></p>
+                <p class="text-[11px] font-black text-slate-900 bg-primary/20 px-1.5 py-0.5 rounded inline-block"><?= formatPrice($productPrice) ?></p>
             </div>
             <span class="material-symbols-outlined text-slate-400 text-[18px]">chevron_right</span>
         </a>
@@ -119,10 +119,10 @@ require_once __DIR__ . '/api/chat_controller.php';
                     <span id="order-status-text" class="text-xs font-bold text-slate-600 uppercase tracking-wider">
                         <?php 
                         if (!$activeOrder) echo "ยังไม่มีคำสั่งซื้อ";
-                        elseif ($activeOrder['status'] === 'pending') echo "รอชำระเงิน: ฿" . number_format($activeOrder['amount'], 2);
+                        elseif ($activeOrder['status'] === 'pending') echo "รอชำระเงิน: " . formatPrice($activeOrder['amount']);
                         elseif ($activeOrder['status'] === 'paid') echo "ชำระเงินแล้ว (เงินพักอยู่ในระบบ)";
                         elseif ($activeOrder['status'] === 'released') echo "โอนเงินเข้าบัญชีผู้ขายแล้ว";
-                        else echo "สถานะ: " . htmlspecialchars($activeOrder['status']);
+                        else echo "สถานะ: " . h($activeOrder['status']);
                         ?>
                     </span>
                 </div>

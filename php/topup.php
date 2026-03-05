@@ -240,6 +240,7 @@ include __DIR__ . '/../includes/navbar_main.php';
                     </div>
 
                     <form id="verifyForm" action="topup_process.php?action=verify_slip" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                         <input type="hidden" name="ref" id="refField">
                         <label class="block text-xs font-bold text-slate-700 mb-2">อัปโหลดสลิปยืนยันการโอนเงิน</label>
                         <div class="flex items-center gap-2 mb-4">

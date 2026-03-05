@@ -12,12 +12,12 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 /* ===== CSRF ===== */
-if (empty($_SESSION['csrf_admin'])) $_SESSION['csrf_admin'] = bin2hex(random_bytes(24));
-$csrf = $_SESSION['csrf_admin'];
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
+$csrf = $_SESSION['csrf_token'];
 
 /* ===== Action ===== */
 $msg = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && hash_equals($csrf, $_POST['csrf'] ?? '')) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && hash_equals($csrf, $_POST['csrf_token'] ?? '')) {
   $ticketId = (int)($_POST['ticket_id'] ?? 0);
   if ($_POST['action'] === 'set_status' && $ticketId > 0) {
     $status = $_POST['status'] ?? 'open';

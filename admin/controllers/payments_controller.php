@@ -11,9 +11,10 @@ if (empty($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 require_once __DIR__ . "/../../config/database.php";
 
 /* ====== CSRF ====== */
-if (empty($_SESSION['csrf'])) {
-  $_SESSION['csrf'] = bin2hex(random_bytes(16));
+if (empty($_SESSION['csrf_token'])) {
+  $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
 }
+$csrf = $_SESSION['csrf_token'];
 
 /* ====== กำหนดแท็บ ====== */
 $tab = (isset($_GET['type']) && in_array($_GET['type'], ['topup','withdraw'], true)) ? $_GET['type'] : 'topup';

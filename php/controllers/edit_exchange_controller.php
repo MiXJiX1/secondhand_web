@@ -1,29 +1,14 @@
 <?php
 session_start();
-$user_id = $_SESSION['user_id'] ?? null;
-if (!$user_id) {
-    header("Location: login.php");
-    exit;
+if (!isLoggedIn()) {
+    redirect($baseUrl . "/login");
 }
+$user_id = (int)$_SESSION['user_id'];
 
 // โหลดค่าคงที่ DB / Token ต่างๆ
 require_once __DIR__ . "/../../config/database.php";
 
-if (!function_exists('allImagesFromField')) {
-    function allImagesFromField(?string $s): array {
-        if (!$s) return [];
-        $s = trim($s);
-        if ($s !== '' && $s[0] === '[') {
-            $arr = json_decode($s, true);
-            if (is_array($arr)) {
-                return array_values(array_filter(array_map(fn($x)=>basename((string)$x), $arr)));
-            }
-        }
-        $parts = preg_split('/[|,;]+/', $s, -1, PREG_SPLIT_NO_EMPTY);
-        if ($parts) return array_values(array_filter(array_map(fn($x)=>basename(trim($x)), $parts)));
-        return [basename($s)];
-    }
-}
+// Image helpers are already in database.php
 
 $CATS = ['ทั่วไป','อิเล็กทรอนิกส์','เสื้อผ้า','หนังสือ','ของสะสม','บริการ'];
 
@@ -47,8 +32,7 @@ if (!$isCreate) {
     $stmt->execute([$itemId, $user_id]);
     $res = $stmt->fetch();
     if (!$res) {
-        http_response_code(404);
-        exit("ไม่พบสินค้าหรือไม่มีสิทธิ์แก้ไข");
+        throw new Exception("ไม่พบสินค้าหรือไม่มีสิทธิ์แก้ไข", 404);
     }
     $prod = $res;
 }
@@ -120,8 +104,7 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['title'])) {
             if ($isCreate) {
                 $st = $pdo->prepare("INSERT INTO exchange_items (user_id, title, category, want_text, condition_text, location, description, images, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 $st->execute([$user_id, $title, $cat, $want, $cond_text, $loc, $desc, $imagesJson, $status]);
-                header("Location: exchange.php?ok=1");
-                exit;
+                redirect($baseUrl . "/exchange?ok=1");
             } else {
                 $st = $pdo->prepare("UPDATE exchange_items SET title=?, category=?, want_text=?, condition_text=?, location=?, description=?, images=?, status=?, updated_at=NOW() WHERE item_id=? AND user_id=?");
                 $st->execute([$title, $cat, $want, $cond_text, $loc, $desc, $imagesJson, $status, $itemId, $user_id]);

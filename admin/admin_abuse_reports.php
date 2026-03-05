@@ -94,7 +94,7 @@ require_once __DIR__ . '/controllers/admin_abuse_reports_controller.php';
         </div>
         <!-- ติดตาม/เลิกติดตาม -->
         <form method="post" class="d-inline">
-          <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
+          <input type="hidden" name="csrf_token" value="<?= h($csrf) ?>">
           <input type="hidden" name="action" value="toggle_follow">
           <input type="hidden" name="report_id" value="<?= (int)$r['report_id'] ?>">
           <button class="btn btn-<?= !empty($followed[(int)$r['report_id']])?'outline-secondary':'primary' ?>">
@@ -103,7 +103,7 @@ require_once __DIR__ . '/controllers/admin_abuse_reports_controller.php';
         </form>
         <!-- เปลี่ยนสถานะ -->
         <form method="post" class="d-flex align-items-center gap-2">
-          <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
+          <input type="hidden" name="csrf_token" value="<?= h($csrf) ?>">
           <input type="hidden" name="action" value="update_status">
           <input type="hidden" name="report_id" value="<?= (int)$r['report_id'] ?>">
           <select name="new_status" class="form-select form-select-sm">
@@ -122,7 +122,7 @@ require_once __DIR__ . '/controllers/admin_abuse_reports_controller.php';
 
       <!-- เพิ่มบันทึก -->
       <form method="post" class="mt-3">
-        <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
+        <input type="hidden" name="csrf_token" value="<?= h($csrf) ?>">
         <input type="hidden" name="action" value="add_note">
         <input type="hidden" name="report_id" value="<?= (int)$r['report_id'] ?>">
         <textarea name="note" class="form-control" rows="2" placeholder="จดบันทึกการตรวจสอบ..."></textarea>

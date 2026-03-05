@@ -106,7 +106,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                                     </button>
                                 <?php else: ?>
                                     <form method="post" action="controllers/user_status_action_controller.php" onsubmit="return confirm('ยืนยันการยกเลิกแบนผู้ใช้ <?= h($u['username']) ?> ?')">
-                                        <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
+                                        <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                                         <input type="hidden" name="action" value="unban">
                                         <input type="hidden" name="user_id" value="<?= (int)$u['user_id'] ?>">
                                         <button class="w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50 transition-colors" type="submit">ยกเลิกแบน</button>
@@ -147,7 +147,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                         </button>
                     </div>
                     
-                    <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
+                    <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                     <input type="hidden" name="action" value="ban">
                     <input type="hidden" name="user_id" id="banUserId" value="">
                     

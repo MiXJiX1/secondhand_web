@@ -7,12 +7,10 @@ ini_set('display_errors', 1);
 require_once __DIR__ . "/../../config/database.php";
 
 // เผื่อ config ยังไม่ได้เริ่ม session
-if (session_status() !== PHP_SESSION_ACTIVE) {
-  session_start();
+if (!isLoggedIn()) {
+  redirect($baseUrl . "/login");
 }
-
-$user_id = $_SESSION['user_id'] ?? null;
-if (!$user_id) { header("Location: login.php"); exit; }
+$user_id = (int)$_SESSION['user_id'];
 
 /* ฟิลเตอร์ช่วงวันที่ (ไม่บังคับ) + validate */
 $start = $_GET['start'] ?? '';

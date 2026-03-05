@@ -11,10 +11,10 @@ if (empty($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 require_once __DIR__ . "/../../config/database.php";
 
 /* ---------- CSRF ---------- */
-if (empty($_SESSION['csrf_admin'])) {
-  $_SESSION['csrf_admin'] = bin2hex(random_bytes(16));
+if (empty($_SESSION['csrf_token'])) {
+  $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
 }
-$csrf = $_SESSION['csrf_admin'];
+$csrf = $_SESSION['csrf_token'];
 
 /* ---------- utils ---------- */
 if(!function_exists('slugify')){
@@ -48,7 +48,7 @@ function uniqueSlug(PDO $pdo, string $baseSlug, int $excludeId = 0): string {
 
 /* ---------- actions ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  if (!hash_equals($csrf, $_POST['csrf'] ?? '')) {
+  if (!hash_equals($csrf, $_POST['csrf_token'] ?? '')) {
     http_response_code(400); exit('Bad CSRF');
   }
 

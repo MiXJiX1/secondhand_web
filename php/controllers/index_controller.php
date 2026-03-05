@@ -67,19 +67,6 @@ $rsActive = new class($products) {
 // 4. Handle AJAX request for filtering
 if (isset($_GET['ajax'])) {
     $currentUserId = $_SESSION['user_id'] ?? 0;
-    // Helper function used in partial
-    if (!function_exists('firstImageFromField')) {
-        function firstImageFromField($field) {
-            if (!$field) return null;
-            $field = trim($field);
-            if ($field[0] === '[') {
-                $arr = json_decode($field, true);
-                if ($arr && !empty($arr)) return basename($arr[0]);
-            }
-            $parts = preg_split('/[|,;]+/', $field, -1, PREG_SPLIT_NO_EMPTY);
-            return $parts ? basename($parts[0]) : basename($field);
-        }
-    }
     include __DIR__ . '/../../includes/product_grid_partial.php';
     exit;
 }
@@ -90,18 +77,4 @@ $soldProducts = $stmt_sold->fetchAll();
 
 $totalRows = count($products);
 $currentUserId = $_SESSION['user_id'] ?? 0;
-
-// Helper function for grid partial
-if (!function_exists('firstImageFromField')) {
-    function firstImageFromField($field) {
-        if (!$field) return null;
-        $field = trim($field);
-        if ($field[0] === '[') {
-            $arr = json_decode($field, true);
-            if ($arr && !empty($arr)) return basename($arr[0]);
-        }
-        $parts = preg_split('/[|,;]+/', $field, -1, PREG_SPLIT_NO_EMPTY);
-        return $parts ? basename($parts[0]) : basename($field);
-    }
-}
 ?>

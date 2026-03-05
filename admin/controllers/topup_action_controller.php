@@ -5,8 +5,8 @@ session_start();
 if (empty($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
   header("Location: ../login.php"); exit();
 }
-if (!isset($_POST['csrf']) || !hash_equals($_SESSION['csrf'] ?? '', $_POST['csrf'])) {
-  http_response_code(403); die('Invalid CSRF');
+if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+  throw new Exception('Invalid CSRF', 403);
 }
 
 require_once __DIR__ . "/../../config/database.php";
@@ -17,7 +17,7 @@ $topupId = isset($_POST['topup_id']) ? (int)$_POST['topup_id'] : 0;
 $action  = $_POST['action'] ?? '';
 
 if ($topupId <= 0 || !in_array($action, ['approve','reject'], true)) {
-  http_response_code(400); die('Invalid request');
+  throw new Exception('Invalid request', 400);
 }
 
 try {
@@ -61,6 +61,5 @@ try {
 
 } catch (Throwable $e) {
   if ($pdo->inTransaction()) $pdo->rollBack();
-  http_response_code(500);
-  echo "Action error: " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
+  throw $e;
 }

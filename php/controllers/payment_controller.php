@@ -3,31 +3,12 @@ session_start();
 
 require_once __DIR__ . "/../../config/database.php";
 
-if (empty($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
+if (!isLoggedIn()) {
+    redirect($baseUrl . "/login");
 }
 
-/* ---------- DB (PDO) ---------- */
-// PDO is provided by database.php ($pdo)
-
-/* ---------- Helpers ---------- */
-if(!function_exists('h')){ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }
-
-/** ดึงไฟล์รูปแรกจากฟิลด์ที่อาจเป็น JSON/คั่นด้วย | , ; หรือเป็นชื่อไฟล์เดี่ยว */
-if(!function_exists('firstImageFromField')){
-function firstImageFromField(?string $s): ?string {
-    if (!$s) return null;
-    $s = trim($s);
-    if ($s !== '' && $s[0] === '[') {
-        $arr = json_decode($s, true);
-        if (is_array($arr) && !empty($arr)) return basename((string)$arr[0]);
-    }
-    $parts = preg_split('/[|,;]+/', $s, -1, PREG_SPLIT_NO_EMPTY);
-    if ($parts && isset($parts[0])) return basename(trim($parts[0]));
-    return basename($s);
-}
-}
+// Product ID handling (helpers are already included in database.php)
+$product = null;
 
 /* ---------- รับ product_id & คิวรีสินค้า ---------- */
 $product = null;
@@ -48,15 +29,10 @@ if (!$product) {
 
 /* ---------- เตรียมรูป ---------- */
 $firstImg = firstImageFromField($product['product_image'] ?? '');
-if ($firstImg) {
-    // ถ้าชื่อไฟล์เริ่มด้วย assets/ ให้ใช้ตรง ๆ ไม่ต้องผ่าน uploads
-    $imgSrc = (strpos($firstImg, 'assets/') === 0) ? $firstImg : 'uploads/' . $firstImg;
-} else {
-    $imgSrc = 'assets/no-image.png';
-}
+$imgSrc = $firstImg ? $baseUrl . '/uploads/' . $firstImg : $baseUrl . '/assets/no-image.png';
 
 /* ---------- CSRF ---------- */
-if (empty($_SESSION['csrf_order'])) {
-    $_SESSION['csrf_order'] = bin2hex(random_bytes(24));
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
 }
-$csrf = $_SESSION['csrf_order'];
+$csrf = $_SESSION['csrf_token'];

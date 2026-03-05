@@ -5,9 +5,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 /* ===== CSRF ===== */
-if (empty($_SESSION['csrf'])) {
-  $_SESSION['csrf'] = bin2hex(random_bytes(16));
+if (empty($_SESSION['csrf_token'])) {
+  $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
 }
+$csrf = $_SESSION['csrf_token'];
 
 /* ===== DB ===== */
 require_once __DIR__ . "/../../config/database.php";
@@ -27,5 +28,5 @@ try {
   $totalUsers = (int)($countStmt->fetch()['total_users'] ?? 0);
 
 } catch (PDOException $e) {
-  die("Database error: ".$e->getMessage());
+  throw new Exception("Database error: ".$e->getMessage());
 }

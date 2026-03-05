@@ -4,13 +4,12 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once __DIR__ . "/../../config/database.php";
-if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
+if (!isLoggedIn()) {
+    redirect($baseUrl . "/login");
+}
 
-// PDO is provided by database.php
-
-/* ===== USER ===== */
-$userId   = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
+// User context already established in database.php/helpers.php
+$userId   = (int)$_SESSION['user_id'];
 $username = $_SESSION['username'] ?? null;
 
 /* ===== ตารางแจ้งเตือน / ตารางยืนยันรับของ ===== */
@@ -138,26 +137,13 @@ if (isset($_GET['ajax'])) {
 }
 
 /* ===== CSRF ===== */
-if (empty($_SESSION['csrf_ex'])) $_SESSION['csrf_ex'] = bin2hex(random_bytes(16));
-$csrf = $_SESSION['csrf_ex'];
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
+$csrf = $_SESSION['csrf_token'];
 
 /* ===== CATEGORIES ===== */
 $CATS = ['electronics','fashion','furniture','vehicle','gameandtoys','household','sport','music','others'];
 
-/* ===== Helper: รูปแรก ===== */
-if (!function_exists('firstImageFromField')) {
-function firstImageFromField(?string $s): ?string {
-  if (!$s) return null;
-  $s = trim($s);
-  if ($s !== '' && $s[0] === '[') {
-    $arr = json_decode($s, true);
-    if (is_array($arr) && !empty($arr)) return basename((string)$arr[0]);
-  }
-  $parts = preg_split('/[|,;]+/', $s, -1, PREG_SPLIT_NO_EMPTY);
-  if ($parts && isset($parts[0])) return basename(trim($parts[0]));
-  return basename($s);
-}
-}
+/* ===== FILTER/LIST (New Tabs Logic) ===== */
 
 /* ===== FILTER/LIST (New Tabs Logic) ===== */
 $tab = $_GET['tab'] ?? 'all'; // all, incoming, outgoing, completed
@@ -261,8 +247,8 @@ $active_trades = $trades[$tab];
 
 /* ===== ACTIONS ===== */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userId > 0) {
-  if (!isset($_POST['csrf']) || $_POST['csrf'] !== $csrf) {
-    die('การตรวจสอบ CSRF ล้มเหลว กรุณารีเฟรชหน้าแล้วลองใหม่');
+  if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+    throw new Exception('การตรวจสอบ CSRF ล้มเหลว กรุณารีเฟรชหน้าแล้วลองใหม่', 403);
   }
 
   $action = $_POST['action'] ?? '';
@@ -306,7 +292,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userId > 0) {
 
       $st = $pdo->prepare("INSERT INTO exchange_items (user_id, title, category, want_text, condition_text, location, description, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
       $st->execute([$userId, $title, $category, $want_text, $condition_text, $location, $description, $images_json]);
-      header("Location: exchange.php?ok=1"); exit;
+      redirect($baseUrl . "/exchange?ok=1");
     }
   }
 
@@ -338,7 +324,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userId > 0) {
       $nt = $pdo->prepare("INSERT INTO exchange_notifications (user_id,item_id,offer_id,type,message) VALUES (?,?,?,?,?)");
       $nt->execute([(int)$item['user_id'], $item_id, $offerId, 'offer_created', $msg]);
 
-      header("Location: exchange.php?offer_ok=1#item-$item_id"); exit;
+      redirect($baseUrl . "/exchange?offer_ok=1#item-$item_id");
     }
   }
 
@@ -411,7 +397,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userId > 0) {
       } elseif (in_array($status,['cancelled','pending','available'],true)) {
         $pdo->prepare("UPDATE exchange_items SET status=? WHERE item_id=?")->execute([$status,$item_id]);
       }
-      header("Location: exchange.php?upd=1#item-$item_id"); exit;
+      redirect($baseUrl . "/exchange?upd=1#item-$item_id");
     }
   }
 
@@ -454,6 +440,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userId > 0) {
             ->execute([$reqId,0,$sellerId,$msgOk]);
       }
     }
-    header("Location: exchange.php?upd=1#item-$item_id"); exit;
+    redirect($baseUrl . "/exchange?upd=1#item-$item_id");
   }
 }

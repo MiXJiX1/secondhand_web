@@ -1,9 +1,9 @@
 <?php
 /* admin_abuse_reports.php — จัดการข้อร้องเรียน */
-ini_set('display_errors',1); ini_set('display_startup_errors',1); error_reporting(E_ALL);
+
 session_start();
 if (!isset($_SESSION['user_id'])) { header('Location: ../login.php'); exit; }
-if (($_SESSION['role'] ?? '') !== 'admin') { http_response_code(403); die('Forbidden'); }
+if (($_SESSION['role'] ?? '') !== 'admin') { throw new Exception('Forbidden', 403); }
 
 require_once __DIR__ . "/../../config/database.php";
 
@@ -21,8 +21,8 @@ $pdo->exec("
 ");
 
 /* ---------- CSRF ---------- */
-if (empty($_SESSION['csrf_admin'])) $_SESSION['csrf_admin'] = bin2hex(random_bytes(16));
-$csrf = $_SESSION['csrf_admin'];
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
+$csrf = $_SESSION['csrf_token'];
 
 /* ---------- Helpers ---------- */
 if(!function_exists('h')){ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }
@@ -79,7 +79,7 @@ function insert_note(PDO $pdo, int $rid, int $actorId, string $note, bool $N_HAS
 
 /* ---------- POST actions ---------- */
 $msg = '';
-if ($_SERVER['REQUEST_METHOD']==='POST' && hash_equals($csrf, $_POST['csrf'] ?? '')) {
+if ($_SERVER['REQUEST_METHOD']==='POST' && hash_equals($csrf, $_POST['csrf_token'] ?? '')) {
   $rid  = (int)($_POST['report_id'] ?? 0);
   $me   = (int)$_SESSION['user_id'];
 

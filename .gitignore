@@ -22,9 +22,11 @@ node_modules/
 
 # Environment settings
 .env
-.env.local
-.env.development
-.env.production
+.env.*
+!.env.example
+
+# Structure tools
+project_structure.txt
 
 # Uploaded Files
 uploads/*

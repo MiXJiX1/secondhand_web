@@ -1,18 +1,18 @@
 <?php
 /* admin_user_ratings.php — รายงาน/จัดการเรตติ้งจากตาราง user_ratings */
-ini_set('display_errors',1); ini_set('display_startup_errors',1); error_reporting(E_ALL);
+
 session_start();
 
 /* ===== ตรวจสิทธิ์แอดมิน ===== */
 if (!isset($_SESSION['user_id'])) { header('Location: ../login.php'); exit; }
-if (($_SESSION['role'] ?? '') !== 'admin') { http_response_code(403); die('Forbidden'); }
+if (($_SESSION['role'] ?? '') !== 'admin') { throw new Exception('Forbidden', 403); }
 
 /* ===== DB: ใช้ config กลาง ===== */
 require_once __DIR__ . "/../../config/database.php";
 
 /* ===== CSRF ===== */
-if (empty($_SESSION['csrf_admin'])) $_SESSION['csrf_admin'] = bin2hex(random_bytes(16));
-$csrf = $_SESSION['csrf_admin'];
+if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
+$csrf = $_SESSION['csrf_token'];
 
 /* ===== รับพารามิเตอร์กรอง/เพจ ===== */
 $q        = trim($_GET['q'] ?? '');            // ค้นหาชื่อผู้ใช้/สินค้า/คอมเมนต์

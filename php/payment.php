@@ -28,7 +28,7 @@ require_once __DIR__ . '/controllers/payment_controller.php';
     </div>
 
     <form action="order_success.php" method="POST" novalidate>
-        <input type="hidden" name="csrf" value="<?= h($csrf) ?>">
+        <input type="hidden" name="csrf_token" value="<?= h($csrf) ?>">
         <input type="hidden" name="product_id" value="<?= (int)$product['product_id'] ?>">
 
         <label for="customer_name">ชื่อผู้รับสินค้า:</label>

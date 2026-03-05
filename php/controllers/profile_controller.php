@@ -2,28 +2,33 @@
 session_start();
 require_once __DIR__ . "/../../config/database.php";
 
-if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }
+if (!isLoggedIn()) {
+    redirect($baseUrl . '/login');
+}
 $user_id = (int)$_SESSION['user_id'];
 
 // CSRF
-if (empty($_SESSION['csrf'])) { $_SESSION['csrf'] = bin2hex(random_bytes(16)); }
-$CSRF = $_SESSION['csrf'];
+if (empty($_SESSION['csrf_token'])) { $_SESSION['csrf_token'] = bin2hex(random_bytes(24)); }
+$CSRF = $_SESSION['csrf_token'];
 
 $flash = null;
 
-// Fetch User Data Early (Needed for validation in POST actions)
+// ---------- Load User Data ----------
 $stmt = $pdo->prepare("SELECT * FROM users WHERE user_id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
-if (!$user) { session_destroy(); header("Location: login.php"); exit; }
+if (!$user) {
+    session_destroy();
+    redirect($baseUrl . '/login');
+}
 
-// Handle Actions
+// ---------- Handle Actions ----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     
-    // CSRF Check (Except for initial profile load)
-    if ($action !== '' && (!isset($_POST['csrf']) || $_POST['csrf'] !== $CSRF)) {
+    // CSRF Check
+    if ($action !== '' && (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token']))) {
         $flash = ['type'=>'error', 'msg'=>'การตรวจสอบความปลอดภัยล้มเหลว (CSRF)'];
     } else {
         // A) Upload Avatar
@@ -37,9 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
             if (in_array($realMime, $allowed, true)) {
                 $newName = 'u_'.bin2hex(random_bytes(6)).'.'.$ext;
-                if (move_uploaded_file($tmp, __DIR__.'/../../uploads/avatars/'.$newName)) {
+                $uploadPath = __DIR__.'/../../uploads/avatars/'.$newName;
+                if (move_uploaded_file($tmp, $uploadPath)) {
                     $pdo->prepare("UPDATE users SET img=? WHERE user_id=?")->execute([$newName, $user_id]);
                     $flash = ['type'=>'success', 'msg'=>'อัปเดตรูปโปรไฟล์เรียบร้อย'];
+                    $user['img'] = $newName; // sync local
                 }
             } else {
                 $flash = ['type'=>'error', 'msg'=>'ไฟล์รูปภาพไม่ถูกต้อง รองรับเฉพาะ JPG, PNG, WEBP, GIF'];
@@ -60,6 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $st = $pdo->prepare("UPDATE users SET fname=?, lname=?, email=?, phone=?, bio=? WHERE user_id=?");
                 $st->execute([$fname, $lname, $email, $phone, $bio, $user_id]);
                 $flash = ['type'=>'success', 'msg'=>'บันทึกข้อมูลส่วนตัวเรียบร้อยแล้ว'];
+                // Update local object
+                $user['fname'] = $fname;
+                $user['lname'] = $lname;
+                $user['email'] = $email;
+                $user['phone'] = $phone;
+                $user['bio']   = $bio;
             }
         }
         
@@ -69,12 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $new_pass = $_POST['new_password'] ?? '';
             $cfm_pass = $_POST['confirm_password'] ?? '';
             
-            // Fetch current password
-            $q = $pdo->prepare("SELECT password FROM users WHERE user_id=? LIMIT 1");
-            $q->execute([$user_id]);
-            $curr = $q->fetch();
-            
-            if (!password_verify($old_pass, $curr['password'])) {
+            if (!password_verify($old_pass, $user['password'])) {
                 $flash = ['type'=>'error', 'msg'=>'รหัสผ่านเดิมไม่ถูกต้อง'];
             } elseif ($new_pass !== $cfm_pass) {
                 $flash = ['type'=>'error', 'msg'=>'รหัสผ่านใหม่ไม่ตรงกัน'];
@@ -84,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $hashed = password_hash($new_pass, PASSWORD_DEFAULT);
                 $pdo->prepare("UPDATE users SET password=? WHERE user_id=?")->execute([$hashed, $user_id]);
                 $flash = ['type'=>'success', 'msg'=>'เปลี่ยนรหัสผ่านเรียบร้อยแล้ว'];
+                $user['password'] = $hashed;
             }
         }
         
@@ -96,12 +105,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($bank_name==='' || $bank_acc==='' || $bank_user==='') {
                 $flash = ['type'=>'error', 'msg'=>'กรุณากรอกข้อมูลบัญชีธนาคารให้ครบถ้วน'];
             } elseif ($user['bank_verified'] == 1) {
-                // Prevent updating if already verified
                 $flash = ['type'=>'error', 'msg'=>'บัญชีธนาคารของคุณได้รับการยืนยันแล้ว ไม่สามารถแก้ไขได้'];
             } else {
                 $st = $pdo->prepare("UPDATE users SET bank_name=?, bank_account=?, bank_account_name=?, bank_verified=0 WHERE user_id=?");
                 $st->execute([$bank_name, $bank_acc, $bank_user, $user_id]);
                 $flash = ['type'=>'success', 'msg'=>'อัปเดตข้อมูลบัญชีธนาคารเรียบร้อย (รอการตรวจสอบ)'];
+                $user['bank_name'] = $bank_name;
+                $user['bank_account'] = $bank_acc;
+                $user['bank_account_name'] = $bank_user;
+                $user['bank_verified'] = 0;
             }
         }
 
@@ -118,23 +130,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $pdo->beginTransaction();
                 try {
-                    // Create withdrawal record
                     $requestId = 'WD' . strtoupper(bin2hex(random_bytes(6)));
                     $stmt = $pdo->prepare("INSERT INTO credit_withdrawals (user_id, amount, bank_name, bank_account, account_name, status, ref_txn, created_at) VALUES (?, ?, ?, ?, ?, 'requested', ?, NOW())");
                     $stmt->execute([$user_id, $amount, $user['bank_name'], $user['bank_account'], $user['bank_account_name'], $requestId]);
                     
-                    // Deduct balance
                     $stmt = $pdo->prepare("UPDATE users SET credit_balance = credit_balance - ? WHERE user_id = ?");
                     $stmt->execute([$amount, $user_id]);
                     
-                    // Record in ledger
                     $stmt = $pdo->prepare("INSERT INTO credit_ledger (user_id, change_amt, reason, ref_id, created_at) VALUES (?, ?, 'withdraw', ?, NOW())");
                     $stmt->execute([$user_id, -$amount, $requestId]);
                     
                     $pdo->commit();
                     $flash = ['type'=>'success', 'msg'=>'ส่งคำขอถอนเงินเรียบร้อยแล้ว กรุณารอการตรวจสอบจากแอดมิน'];
-                    
-                    // Update local user object for UI
                     $user['credit_balance'] -= $amount;
                 } catch (Exception $e) {
                     $pdo->rollBack();
@@ -145,29 +152,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch User Data (Moved to top)
-
-$avatarPath = !empty($user['img']) ? '../uploads/avatars/'.basename($user['img']) : '../assets/no-avatar.png';
+// ---------- Data for UI ----------
+$avatarPath = !empty($user['img']) ? $baseUrl . '/uploads/avatars/'.basename($user['img']) : $baseUrl . '/assets/no-avatar.png';
 $credit = (float)($user['credit_balance'] ?? 0);
-$fullName = trim($user['fname'] . ' ' . $user['lname']) ?: $user['username'];
+$fullName = trim(($user['fname']??'') . ' ' . ($user['lname']??'')) ?: $user['username'];
 $joinDate = date('F Y', strtotime($user['created_at']));
-$joinDateTh = date('M Y', strtotime($user['created_at']));
 
-// Fetch Stats (Active Listings, Items Sold)
+// Fetch Stats
 $stStats = $pdo->prepare("SELECT COUNT(CASE WHEN status='available' THEN 1 END) as active_count, COUNT(CASE WHEN status='sold' THEN 1 END) as sold_count FROM products WHERE user_id = ?");
 $stStats->execute([$user_id]);
 $stats = $stStats->fetch();
 $activeCount = $stats['active_count'] ?? 0;
 $soldCount = $stats['sold_count'] ?? 0;
 
-// Fetch Average Rating
+// Ratings
 $stRating = $pdo->prepare("SELECT AVG(score) as avg_score, COUNT(*) as count FROM user_ratings WHERE rated_user_id = ?");
 $stRating->execute([$user_id]);
 $ratingData = $stRating->fetch();
 $avgRating = $ratingData['avg_score'] ? number_format((float)$ratingData['avg_score'], 1) : '0.0';
 $ratingCount = $ratingData['count'] ?? 0;
 
-// Fetch Transaction History (Topups & Withdrawals)
+// History
 $qHistory = $pdo->prepare("
     (SELECT 'topup' as type, amount, status, created_at, method as detail, slip_path, reference_no as ref
      FROM credit_topups 
@@ -182,23 +187,12 @@ $qHistory = $pdo->prepare("
 $qHistory->execute([$user_id, $user_id]);
 $history = $qHistory->fetchAll();
 
-// Bank Logo Helper
-$bankLogoMap = [
-    'กสิกรไทย' => 'kbank.png',
-    'ไทยพาณิชย์' => 'scb.png',
-    'กรุงไทย' => 'ktb.png',
-    'กรุงเทพ' => 'bbl.png',
-    'กรุงศรีอยุธยา' => 'bay.png',
-    'ทหารไทยธนชาต' => 'ttb.png',
-    'ออมสิน' => 'gsb.png'
-];
-
-// Recent Purchases
-$po = $pdo->prepare("SELECT o.*, p.product_name, p.product_image FROM orders o JOIN products p ON o.product_id=p.product_id WHERE o.user_id=? ORDER BY o.id DESC LIMIT 20");
+// Purchases
+$po = $pdo->prepare("SELECT o.*, p.product_name, p.product_image FROM orders o JOIN products p ON o.product_id=p.product_id WHERE o.user_id=? ORDER BY o.id DESC LIMIT 40");
 $po->execute([$user_id]);
 $purchases = $po->fetchAll();
 
-// Recent Sales
+// Sales
 $so = $pdo->prepare("
     SELECT o.*, p.product_name, p.product_image, b.username AS buyer_name 
     FROM orders o 
@@ -206,16 +200,12 @@ $so = $pdo->prepare("
     JOIN users b ON o.user_id = b.user_id
     WHERE p.user_id = ? 
     ORDER BY o.id DESC 
-    LIMIT 20
+    LIMIT 40
 ");
 $so->execute([$user_id]);
 $sales = $so->fetchAll();
 
-// User location
-// Hardcoded to Thailand for now as there is no specific field
-$location = "Thailand";
-
-// Fetch Favorites
+// Favorites
 $sf = $pdo->prepare("SELECT f.*, p.product_name, p.product_image, p.product_price, p.location_name 
                      FROM favorites f 
                      JOIN products p ON f.product_id = p.product_id 
@@ -224,27 +214,7 @@ $sf = $pdo->prepare("SELECT f.*, p.product_name, p.product_image, p.product_pric
 $sf->execute([$user_id]);
 $favorites = $sf->fetchAll();
 
-// For Navbar
-$currentUserId = $user_id;
-
-$userDisplayName = '';
-$userAvatarImage = '';
-$userAvatarText = '🙂';
-if ($stmtNav = $pdo->prepare("SELECT * FROM users WHERE user_id = ? LIMIT 1")) {
-    $stmtNav->execute([$currentUserId]);
-    $u = $stmtNav->fetch();
-    if ($u) {
-        $userAvatarImage = !empty($u['img']) ? '../uploads/avatars/'.basename($u['img']) : '';
-        $fn = trim((string)($u['fname'] ?? ''));
-        $ln = trim((string)($u['lname'] ?? ''));
-        if ($fn !== '' || $ln !== '') {
-            $userDisplayName = trim($fn . ' ' . $ln);
-        } else {
-            $userDisplayName = (string)($u['username'] ?? ($_SESSION['username'] ?? ''));
-        }
-        $parts = preg_split('/\s+/', $userDisplayName, -1, PREG_SPLIT_NO_EMPTY);
-        if ($parts) {
-            $userAvatarText = mb_substr($parts[0], 0, 1, 'UTF-8') . (isset($parts[1]) ? mb_substr($parts[1], 0, 1, 'UTF-8') : '');
-        }
-    }
-}
+// Navbar Variables
+$userDisplayName = $fullName;
+$userAvatarImage = !empty($user['img']) ? $baseUrl . '/uploads/avatars/'.basename($user['img']) : '';
+$userAvatarText = mb_substr($userDisplayName, 0, 1) ?: 'U';

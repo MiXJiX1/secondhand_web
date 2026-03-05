@@ -5,9 +5,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 /* ===== CSRF ===== */
-if (empty($_SESSION['csrf'])) {
-  $_SESSION['csrf'] = bin2hex(random_bytes(16));
+if (empty($_SESSION['csrf_token'])) {
+  $_SESSION['csrf_token'] = bin2hex(random_bytes(24));
 }
+$csrf = $_SESSION['csrf_token'];
 
 /* ===== DB ===== */
 require_once __DIR__ . "/../../config/database.php";
@@ -18,7 +19,7 @@ $flash = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     error_log("BANK VERIFY POST RECEIVED: action=" . ($_POST['action'] ?? 'null') . ", user_id=" . ($_POST['user_id'] ?? 'null'));
     
-    if (!isset($_POST['csrf']) || $_POST['csrf'] !== $_SESSION['csrf']) {
+    if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
         $flash = ['type'=>'error', 'msg'=>'CSRF Token Mismatch!'];
         error_log("BANK VERIFY: CSRF Mismatch");
     } else {
@@ -59,24 +60,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch Pending and Verified Bank Accounts
 try {
-  $stmt = $pdo->query("
+  $bankRecords = $pdo->query("
     SELECT 
       user_id, username, fname, lname, email, img,
       bank_name, bank_account, bank_account_name, bank_verified
     FROM users
     WHERE bank_account IS NOT NULL AND bank_account != ''
     ORDER BY bank_verified ASC, user_id DESC
-  ");
-  $bankRecords = $stmt->fetchAll();
+  ")->fetchAll();
 
   $pendingCount = 0;
   foreach ($bankRecords as $r) {
       if (!$r['bank_verified']) $pendingCount++;
   }
 } catch (PDOException $e) {
-  die("Database error: ".$e->getMessage());
+  throw new Exception("Database error: ".$e->getMessage());
 }
 
 if(!function_exists('h')){ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); } }

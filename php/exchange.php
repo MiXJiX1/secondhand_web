@@ -204,7 +204,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
                     
                     <?php elseif ($t['display_status'] === 'PENDING' && $isMine): ?>
                         <form method="post" class="flex gap-2 w-full sm:w-auto">
-                            <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                            <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                             <input type="hidden" name="action" value="update_status">
                             <input type="hidden" name="item_id" value="<?= $t['item_id'] ?>">
                             <input type="hidden" name="offer_id" value="<?= $t['offer_id'] ?>">
@@ -308,7 +308,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
                 </div>
 
                 <form method="post" action="exchange.php">
-                    <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                     <input type="hidden" name="action" value="offer">
                     <input type="hidden" name="item_id" id="offer_target_item_id" value="">
 
@@ -390,7 +390,7 @@ require_once __DIR__ . '/controllers/exchange_controller.php';
                 </p>
 
                 <form method="post" action="exchange.php" id="confirmReceiptForm">
-                    <input type="hidden" name="csrf" value="<?= $csrf ?>">
+                    <input type="hidden" name="csrf_token" value="<?= $csrf ?>">
                     <input type="hidden" name="action" value="confirm_received">
                     <input type="hidden" name="item_id" id="confirm_item_id" value="">
                     <input type="hidden" name="offer_id" id="confirm_offer_id" value="">

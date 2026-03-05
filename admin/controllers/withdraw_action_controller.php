@@ -9,8 +9,8 @@ session_start();
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
   header("Location: ../php/login.php"); exit();
 }
-if (!isset($_POST['csrf']) || $_POST['csrf'] !== ($_SESSION['csrf'] ?? '')) {
-  http_response_code(400); die('CSRF invalid');
+if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+  throw new Exception('CSRF invalid', 400);
 }
 $adminId = (int)($_SESSION['user_id'] ?? 0);
 
@@ -138,10 +138,10 @@ require_once __DIR__ . "/../../config/database.php";
     }
 
     $transRef = trim($_POST['trans_ref'] ?? '');
-    if ($transRef === '') { $pdo->rollBack(); http_response_code(400); die('กรุณาระบุ Transaction Ref'); }
+    if ($transRef === '') { throw new Exception('กรุณาระบุ Transaction Ref', 400); }
 
     if (!isset($_FILES['slip']) || $_FILES['slip']['error'] !== UPLOAD_ERR_OK) {
-      $pdo->rollBack(); http_response_code(400); die('กรุณาอัปโหลดไฟล์สลิป');
+      throw new Exception('กรุณาอัปโหลดไฟล์สลิป', 400);
     }
 
     // ตรวจชนิดไฟล์ + ขนาด
@@ -149,7 +149,7 @@ require_once __DIR__ . "/../../config/database.php";
     $size   = (int)$f['size'];
     $maxMb  = 8 * 1024 * 1024; // จำกัด 8MB
     if ($size <= 0 || $size > $maxMb) {
-      $pdo->rollBack(); http_response_code(400); die('ไฟล์ใหญ่เกินกำหนด (≤ 8MB)');
+      throw new Exception('ไฟล์ใหญ่เกินกำหนด (≤ 8MB)', 400);
     }
 
     $finfoMime = function_exists('finfo_open')
@@ -164,7 +164,7 @@ require_once __DIR__ . "/../../config/database.php";
 
     $allowMap = ['image/jpeg'=>'jpg', 'image/png'=>'png', 'application/pdf'=>'pdf'];
     if (!$finfoMime || !isset($allowMap[$finfoMime])) {
-      $pdo->rollBack(); http_response_code(400); die('ชนิดไฟล์ไม่ถูกต้อง (อนุญาต: JPG, PNG, PDF)');
+      throw new Exception('ชนิดไฟล์ไม่ถูกต้อง (อนุญาต: JPG, PNG, PDF)', 400);
     }
 
     // โฟลเดอร์ปลายทาง (ใช้โฟลเดอร์ slips เดียวกันกับ Top-up เพื่อความง่ายในการดึงข้อมูล)
@@ -178,7 +178,7 @@ require_once __DIR__ . "/../../config/database.php";
     $dest = $uploadDir . $name;
 
     if (!move_uploaded_file($f['tmp_name'], $dest)) {
-      $pdo->rollBack(); http_response_code(500); die('อัปโหลดสลิปไม่สำเร็จ');
+      throw new Exception('อัปโหลดสลิปไม่สำเร็จ', 500);
     }
     @chmod($dest, 0644);
 

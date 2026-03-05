@@ -76,7 +76,7 @@ require_once __DIR__ . '/controllers/product_detail_controller.php';
                             <span class="text-xs text-slate-400 font-bold">(5.0)</span>
                         </div>
                         <div class="mt-3">
-                            <a href="<?= $baseUrl ?>/php/seller_profile.php?id=<?= (int)$product['user_id'] ?>" 
+                            <a href="<?= $baseUrl ?>/seller/<?= (int)$product['user_id'] ?>" 
                                class="inline-flex items-center gap-2 bg-primary text-slate-900 px-5 py-2.5 rounded-xl text-sm font-black hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 uppercase tracking-wider">
                                 ดูสินค้าอื่นๆ ของผู้ขายรายนี้
                                 <span class="material-symbols-outlined text-sm">chevron_right</span>
@@ -107,21 +107,20 @@ require_once __DIR__ . '/controllers/product_detail_controller.php';
                     </div>
                     <h1 class="text-5xl font-bold text-slate-900 dark:text-white leading-tight tracking-tight"><?= h($product['product_name']) ?></h1>
                     <div class="text-5xl font-black text-primary flex items-baseline gap-2">
-                        <span class="text-[80px] leading-none -mb-3 -ml-2">฿</span><?= number_format((float)$product['product_price'], 0) ?>
-                        <small class="text-slate-400 text-sm font-medium">บาท</small>
+                        <span class="text-[80px] leading-none -mb-3 -ml-2"><?= formatPrice($product['product_price']) ?></span>
                     </div>
                 </div>
 
                 <!-- Action Box -->
                 <div class="action-box flex gap-3">
                     <?php if ($isOwner): ?>
-                    <a href="<?= $baseUrl ?>/php/edit_product.php?id=<?= (int)$product['product_id'] ?>" 
+                    <a href="<?= $url ?>/php/edit_product.php?id=<?= (int)$product['product_id'] ?>" 
                        class="flex-[3] flex items-center justify-center gap-3 bg-white dark:bg-slate-800 border-2 border-primary text-slate-900 dark:text-white py-4 rounded-2xl font-black text-lg hover:bg-primary hover:text-slate-900 transition-all active:scale-95 group">
                         <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">edit_note</span> 
                         แก้ไขข้อมูลสินค้า
                     </a>
                     <?php else: ?>
-                    <a href="<?= $baseUrl ?>/ChatApp/chat_list.php?product_id=<?= (int)$product['product_id'] ?>&user_id=<?= (int)$product['user_id'] ?>" 
+                    <a href="<?= $url ?>/chat?product_id=<?= (int)$product['product_id'] ?>&user_id=<?= (int)$product['user_id'] ?>" 
                        class="flex-[3] flex items-center justify-center gap-3 bg-primary text-slate-900 py-4 rounded-2xl font-black text-lg hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95 group">
                         <span class="material-symbols-outlined group-hover:scale-110 transition-transform">chat_bubble</span> 
                         เริ่มพูดคุยกับผู้ขาย

@@ -65,7 +65,7 @@ require_once __DIR__ . '/controllers/forgot_password_controller.php';
             <?php endif; ?>
 
             <form method="post" class="space-y-6 text-left" novalidate>
-                <input type="hidden" name="csrf" value="<?= h($CSRF) ?>">
+                <input type="hidden" name="csrf_token" value="<?= h($CSRF) ?>">
                 
                 <div class="space-y-1.5">
                     <label for="email" class="block text-xs font-bold text-slate-900">Email Address</label>
@@ -161,7 +161,7 @@ require_once __DIR__ . '/controllers/forgot_password_controller.php';
                 <?php endif; ?>
 
                 <form method="post" class="space-y-5 text-left" novalidate>
-                    <input type="hidden" name="csrf" value="<?= h($CSRF) ?>">
+                    <input type="hidden" name="csrf_token" value="<?= h($CSRF) ?>">
                     
                     <div class="space-y-1.5">
                         <label for="password" class="block text-xs font-bold text-slate-900">New Password</label>

@@ -36,11 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check Duplicate
-    $stmt = $conn->prepare("SELECT 1 FROM users WHERE username=? OR email=? LIMIT 1");
-    $stmt->bind_param('ss', $username, $email);
-    $stmt->execute();
-    if ($stmt->get_result()->num_rows > 0) {
-        json_response(['status' => 'error', 'message' => 'ชื่อผู้ใช้หรืออีเมลนี้มีในระบบแล้ว'], 409);
+    try {
+        $stmt = $pdo->prepare("SELECT 1 FROM users WHERE username=? OR email=? LIMIT 1");
+        $stmt->execute([$username, $email]);
+        if ($stmt->fetch()) {
+            json_response(['status' => 'error', 'message' => 'ชื่อผู้ใช้หรืออีเมลนี้มีในระบบแล้ว'], 409);
+        }
+    } catch (PDOException $e) {
+        json_response(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()], 500);
     }
 
     // Avatar
@@ -60,19 +63,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $hash = password_hash($pwd, PASSWORD_DEFAULT);
-    $stmt = $conn->prepare("INSERT INTO users (username, password, email, fname, lname, img, role, status) VALUES (?,?,?,?,?,?,'user','active')");
-    $stmt->bind_param('ssssss', $username, $hash, $email, $fname, $lname, $avatar);
-    
-    if ($stmt->execute()) {
-        $new_id = $conn->insert_id;
+    try {
+        $hash = password_hash($pwd, PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare("INSERT INTO users (username, password, email, fname, lname, img, role, status) VALUES (?,?,?,?,?,?,'user','active')");
+        $stmt->execute([$username, $hash, $email, $fname, $lname, $avatar]);
+        
+        $new_id = $pdo->lastInsertId();
         $logSql = "INSERT INTO activity_logs (user_id, username, action_type, description) VALUES (?, ?, 'user_new', 'สมัครสมาชิกใหม่ในระบบ')";
-        $logStmt = $conn->prepare($logSql);
-        $logStmt->bind_param('is', $new_id, $username);
-        $logStmt->execute();
+        $logStmt = $pdo->prepare($logSql);
+        $logStmt->execute([$new_id, $username]);
 
         json_response(['status' => 'success', 'message' => 'สมัครสมาชิกสำเร็จ']);
-    } else {
-        json_response(['status' => 'error', 'message' => 'เกิดข้อผิดพลาดในการบันทึกข้อมูล'], 500);
+    } catch (PDOException $e) {
+        json_response(['status' => 'error', 'message' => 'เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' . $e->getMessage()], 500);
     }
 }

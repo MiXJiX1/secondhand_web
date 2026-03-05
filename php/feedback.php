@@ -37,7 +37,7 @@ include __DIR__ . '/../includes/navbar_back.php';
         <div class="small">ยังไม่มีคำสั่งซื้อสำเร็จ จึงยังไม่สามารถให้คะแนนได้</div>
       <?php else: ?>
         <form method="post" style="display:grid;gap:12px">
-          <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
           <input type="hidden" name="action" value="rate">
 
           <div class="row">
@@ -122,7 +122,7 @@ include __DIR__ . '/../includes/navbar_back.php';
     <div class="panel">
       <h3 style="margin-top:0">รายงานผู้ใช้</h3>
       <form method="post" style="display:grid;gap:12px">
-        <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <input type="hidden" name="action" value="report">
 
         <div class="row">

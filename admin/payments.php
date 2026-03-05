@@ -197,7 +197,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                                             </div>
 
                                             <form method="post" action="controllers/withdraw_action_controller.php" enctype="multipart/form-data" class="space-y-2">
-                                                <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
+                                                <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                                                 <input type="hidden" name="withdraw_id" value="<?= (int)$r['withdraw_id'] ?>">
                                                 <input type="hidden" name="action" value="mark_paid">
                                                 
@@ -220,7 +220,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                                         <!-- Reject Form -->
                                         <div x-show="openReject" x-cloak class="mt-2 p-2 bg-red-50 rounded-lg border border-red-100 text-left">
                                             <form method="post" action="controllers/withdraw_action_controller.php">
-                                                <input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
+                                                <input type="hidden" name="csrf_token" value="<?= h($_SESSION['csrf_token']) ?>">
                                                 <input type="hidden" name="withdraw_id" value="<?= (int)$r['withdraw_id'] ?>">
                                                 <input type="hidden" name="action" value="reject">
                                                 <textarea name="reason" class="w-full text-[10px] border border-red-200 rounded p-1 mb-1 focus:outline-none focus:ring-1 focus:ring-red-400" placeholder="เหตุผลที่ปฏิเสธ..." required></textarea>

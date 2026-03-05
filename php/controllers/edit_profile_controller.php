@@ -1,10 +1,9 @@
 <?php
 session_start();
-$user_id = $_SESSION['user_id'] ?? null;
-if (!$user_id) {
-    header("Location: login.php");
-    exit;
+if (!isLoggedIn()) {
+    redirect($baseUrl . "/login");
 }
+$user_id = (int)$_SESSION['user_id'];
 
 require_once __DIR__ . "/../../config/database.php";
 
@@ -15,7 +14,7 @@ $stmt = $pdo->prepare("SELECT username, fname, lname FROM users WHERE user_id = 
 $stmt->execute([$user_id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$user) {
-    exit("ไม่พบผู้ใช้");
+    throw new Exception("ไม่พบผู้ใช้", 404);
 }
 
 $error = '';
@@ -53,8 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['fname'] = $fname;
                 $_SESSION['lname'] = $lname;
 
-                header("Location: profile.php?updated=true");
-                exit;
+                redirect($baseUrl . "/profile?updated=true");
             }
         }
     }

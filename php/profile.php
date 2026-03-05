@@ -77,7 +77,7 @@ include __DIR__ . '/../includes/navbar_main.php';
                     <!-- Upload Button -->
                     <form method="POST" enctype="multipart/form-data" id="avatarForm">
                         <input type="hidden" name="action" value="upload_avatar">
-                        <input type="hidden" name="csrf" value="<?= $CSRF ?>">
+                        <input type="hidden" name="csrf_token" value="<?= $CSRF ?>">
                         <input type="file" name="avatar" id="avatarInput" class="hidden" accept="image/*" onchange="this.form.submit()">
                         <button type="button" onclick="document.getElementById('avatarInput').click()" class="absolute bottom-0 right-0 w-8 h-8 bg-primary text-slate-900 rounded-full flex items-center justify-center hover:bg-yellow-400 transition-colors shadow-md border-2 border-white cursor-pointer tooltip tooltip-top" title="เปลี่ยนรูปโปรไฟล์">
                             <span class="material-symbols-outlined text-[16px] font-bold">edit</span>
@@ -169,7 +169,7 @@ include __DIR__ . '/../includes/navbar_main.php';
                 
                 <form method="POST" class="space-y-6">
                     <input type="hidden" name="action" value="update_profile">
-                    <input type="hidden" name="csrf" value="<?= $CSRF ?>">
+                    <input type="hidden" name="csrf_token" value="<?= $CSRF ?>">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
@@ -220,7 +220,7 @@ include __DIR__ . '/../includes/navbar_main.php';
 
                 <form method="POST" class="space-y-5">
                     <input type="hidden" name="action" value="change_password">
-                    <input type="hidden" name="csrf" value="<?= $CSRF ?>">
+                    <input type="hidden" name="csrf_token" value="<?= $CSRF ?>">
 
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">รหัสผ่านปัจจุบัน</label>
@@ -311,7 +311,7 @@ include __DIR__ . '/../includes/navbar_main.php';
                     </h4>
                     <form method="POST" class="space-y-4">
                         <input type="hidden" name="action" value="update_bank">
-                        <input type="hidden" name="csrf" value="<?= $CSRF ?>">
+                        <input type="hidden" name="csrf_token" value="<?= $CSRF ?>">
                         
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">ชื่อธนาคาร</label>
@@ -622,7 +622,7 @@ include __DIR__ . '/../includes/navbar_main.php';
         
         <form method="POST" class="p-6 space-y-6">
             <input type="hidden" name="action" value="request_withdrawal">
-            <input type="hidden" name="csrf" value="<?= $CSRF ?>">
+            <input type="hidden" name="csrf_token" value="<?= $CSRF ?>">
             
             <?php if ($user['bank_verified'] != 1): ?>
                 <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-xl flex items-start gap-3">

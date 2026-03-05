@@ -33,7 +33,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
     </div>
 
     <form method="post" class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-        <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
         <input type="hidden" name="action" value="create">
         
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
@@ -73,7 +73,7 @@ require_once __DIR__ . '/layouts/admin_topbar.php';
                 <?php else: foreach($cats as $c): ?>
                     <tr class="hover:bg-slate-50 transition-colors group">
                         <form method="post" onsubmit="return true;">
-                            <input type="hidden" name="csrf" value="<?= htmlspecialchars($csrf) ?>">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf) ?>">
                             <input type="hidden" name="id" value="<?= (int)$c['id'] ?>">
                             
                             <td class="py-3 px-4">

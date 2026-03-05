@@ -3,7 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once __DIR__ . "/../config/database.php";
+require_once __DIR__ . "/../../config/database.php";
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 $userId = $_SESSION['user_id'] ?? null;
 ?>
@@ -38,7 +38,7 @@ $userId = $_SESSION['user_id'] ?? null;
     <div class="bg-white border-b border-slate-100 relative z-50">
         <?php 
         $current_page = 'help';
-        include __DIR__ . '/../includes/navbar_main.php'; 
+        include __DIR__ . '/../../includes/navbar_main.php'; 
         ?>
     </div>
 
@@ -189,7 +189,7 @@ $userId = $_SESSION['user_id'] ?? null;
     </section>
 
     <div class="mt-auto">
-        <?php include __DIR__ . '/../includes/footer.php'; ?>
+        <?php include __DIR__ . '/../../includes/footer.php'; ?>
     </div>
 
 </body>

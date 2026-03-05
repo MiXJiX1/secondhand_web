@@ -36,7 +36,7 @@ require_once __DIR__ . '/controllers/forgot_password_controller.php';
             <span class="text-xl font-black text-slate-900 tracking-tight">Marketplace</span>
         </a>
         <div class="hidden sm:block">
-            <a href="../help/getting-started.php" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 text-white hover:bg-slate-700 transition-colors">
+            <a href="help/getting-started.php" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 text-white hover:bg-slate-700 transition-colors">
                 <span class="material-symbols-outlined text-[18px]">question_mark</span>
             </a>
         </div>

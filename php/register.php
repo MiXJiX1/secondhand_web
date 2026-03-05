@@ -47,7 +47,7 @@ require_once __DIR__ . '/controllers/register_controller.php';
         <div class="hidden md:flex items-center gap-8">
             <a href="../index.php" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Shop</a>
             <a href="sell.php" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">Sell</a>
-            <a href="../help/getting-started.php" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">About</a>
+            <a href="help/getting-started.php" class="text-sm font-bold text-slate-600 hover:text-slate-900 transition-colors">About</a>
         </div>
 
         <div class="flex items-center gap-4">

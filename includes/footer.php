@@ -34,7 +34,7 @@
             <div class="col-span-1">
                 <h4 class="font-bold text-slate-900 mb-4 text-[15px]">Support</h4>
                 <ul class="space-y-3">
-                    <li><a href="/secondhand_webv2/help/getting-started.php" class="text-[13px] text-yellow-600 hover:text-yellow-700 transition-colors font-bold">Help Center</a></li>
+                    <li><a href="/secondhand_webv2/php/help/getting-started.php" class="text-[13px] text-yellow-600 hover:text-yellow-700 transition-colors font-bold">Help Center</a></li>
                     <li><a href="#" class="text-[13px] text-slate-500 hover:text-primary transition-colors font-medium">Safety Center</a></li>
                     <li><a href="#" class="text-[13px] text-slate-500 hover:text-primary transition-colors font-medium">Community Guidelines</a></li>
                     <li><a href="#" class="text-[13px] text-slate-500 hover:text-primary transition-colors font-medium">Report an Issue</a></li>

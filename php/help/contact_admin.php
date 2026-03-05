@@ -4,7 +4,7 @@ declare(strict_types=1);
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-require_once __DIR__ . "/../config/database.php";
+require_once __DIR__ . "/../../config/database.php";
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
 /* ===== สร้างตารางถ้ายังไม่มี ===== */
@@ -55,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && ($_POST['action'] ?? '')==='create' )
     if ($subject === '' || $message === '') throw new RuntimeException('กรุณากรอกหัวข้อและรายละเอียดให้ครบ');
 
     // อัปโหลดไฟล์แนบ (ไม่บังคับ)
-    $uploadDirFs  = realpath(__DIR__ . '/..') . '/uploads/support/';
-    $uploadDirUrl = '../uploads/support/';
+    $uploadDirFs  = realpath(__DIR__ . '/../..') . '/uploads/support/';
+    $uploadDirUrl = '../../uploads/support/';
     if (!is_dir($uploadDirFs)) @mkdir($uploadDirFs, 0755, true);
 
     $pdo->beginTransaction();
@@ -119,12 +119,12 @@ if(!function_exists('h')){ function h($s){ return htmlspecialchars((string)$s, E
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ติดต่อผู้ดูแล</title>
-<link rel="stylesheet" href="../assets/css/main.css">
-<link rel="stylesheet" href="../assets/css/help-contact_admin.css">
+<link rel="stylesheet" href="../../assets/css/main.css">
+<link rel="stylesheet" href="../../assets/css/help-contact_admin.css">
 </head>
 <body>
   <div class="topbar">
-    <a class="back" href="../index.php">← กลับหน้าแรก</a>
+    <a class="back" href="../../index.php">← กลับหน้าแรก</a>
     <div class="title">ติดต่อผู้ดูแลระบบ</div>
   </div>
 
@@ -166,7 +166,7 @@ if(!function_exists('h')){ function h($s){ return htmlspecialchars((string)$s, E
 
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-brand" type="submit">ส่งคำขอ</button>
-          <a class="btn btn-ghost" href="../php/feedback.php">ไปหน้า “ให้คะแนน/รายงานผู้ใช้”</a>
+          <a class="btn btn-ghost" href="../feedback.php">ไปหน้า “ให้คะแนน/รายงานผู้ใช้”</a>
         </div>
       </form>
     </div>

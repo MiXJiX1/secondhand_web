@@ -179,7 +179,8 @@
         slip_12_1755058585_13f82fbd.jpg
         slip_12_1755071794_8c6ce20e.jpg
         slip_17_1755016049_e188c288.jpg
-        wd_5_1756838386.jpg    chatapp/
+        wd_5_1756838386.jpg
+    chatapp/
         api/
             api_chat_image.php
             api_chat_send.php
@@ -190,3 +191,7 @@
         chat.php
         chat_list.php
         payment_result.php
+    php/
+        help/
+            contact_admin.php
+            getting-started.php

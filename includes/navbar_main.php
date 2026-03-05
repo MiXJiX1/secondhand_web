@@ -63,7 +63,7 @@ function navClass($pageName, $current_page) {
       </a>
       <a class="<?= navClass('my_products.php', $current_page) ?>" href="<?= $url ?>/php/my_products.php">สินค้าของฉัน</a>
       <a class="<?= navClass('topup.php', $current_page) ?>" href="<?= $url ?>/php/topup.php">เติมเงิน MSU-PAY</a>
-      <a class="<?= navClass('getting-started.php', $current_page) ?>" href="<?= $url ?>/help/getting-started.php">ช่วยเหลือ</a>
+      <a class="<?= navClass('getting-started.php', $current_page) ?>" href="<?= $url ?>/php/help/getting-started.php">ช่วยเหลือ</a>
     </nav>
   </div>
   
@@ -106,7 +106,7 @@ function navClass($pageName, $current_page) {
     </a>
     <a class="<?= navClass('my_products.php', $current_page) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/php/my_products.php">สินค้าของฉัน</a>
     <a class="<?= navClass('topup.php', $current_page) ?> block py-2 border-b border-slate-800 text-base" href="<?= $url ?>/php/topup.php">เติมเงิน</a>
-    <a class="<?= navClass('getting-started.php', $current_page) ?> block py-2 text-base" href="<?= $url ?>/help/getting-started.php">ช่วยเหลือ</a>
+    <a class="<?= navClass('getting-started.php', $current_page) ?> block py-2 text-base" href="<?= $url ?>/php/help/getting-started.php">ช่วยเหลือ</a>
 </div>
 
 <script>

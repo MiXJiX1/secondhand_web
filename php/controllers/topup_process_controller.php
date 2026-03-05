@@ -65,7 +65,7 @@ if ($action === 'verify_slip') {
   }
 
   // เรียก Slip Scanner Logic โดยตรงจาก dir: slip_api
-  require_once __DIR__ . '/../../slip_api/SlipScanner.php';
+  require_once __DIR__ . '/../../api/slip_api/SlipScanner.php';
   
   $scanner = new \SlipAPI\SlipScanner();
   $j = $scanner->scanFile($_FILES['slip']['tmp_name']);

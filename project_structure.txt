@@ -25,6 +25,9 @@
         ban_appeal.php
         categories_list.php
         favorite.php
+        slip_api/
+            api.php
+            SlipScanner.php
     assets/
         default.png
         banks/

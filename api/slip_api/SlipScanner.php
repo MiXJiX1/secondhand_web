@@ -1,7 +1,7 @@
 <?php
 namespace SlipAPI;
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;

@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../../config/database.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(["status" => "error", "message" => "Not logged in"]);

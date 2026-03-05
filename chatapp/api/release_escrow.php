@@ -24,7 +24,7 @@ if ($requestId==='' || $productId<=0) {
 }
 
 try {
-  require_once __DIR__ . "/../config/database.php";
+  require_once __DIR__ . "/../../config/database.php";
 
   // ===== helper: หา (หรือสร้าง) ผู้ใช้ escrow =====
   $escrowId = getEscrowUserId($pdo);

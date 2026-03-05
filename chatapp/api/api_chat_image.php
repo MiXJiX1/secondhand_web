@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once __DIR__ . "/../config/database.php";
+require_once __DIR__ . "/../../config/database.php";
 
 $userId = (int)$_SESSION['user_id'];
 $requestId = $_POST['request_id'] ?? '';
@@ -41,7 +41,7 @@ if (!$ext) {
     $ext = ($mime === 'image/jpeg') ? 'jpg' : (($mime === 'image/png') ? 'png' : 'webp');
 }
 $filename = 'chat_' . uniqid() . '_' . time() . '.' . $ext;
-$targetDir = __DIR__ . '/../uploads/chat/';
+$targetDir = __DIR__ . '/../../uploads/chat/';
 
 if (!is_dir($targetDir)) {
     mkdir($targetDir, 0777, true);

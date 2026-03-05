@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 header('Content-Type: application/json; charset=utf-8');
 session_start();
 
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../../config/database.php';
 if ($conn->connect_error) { echo json_encode([]); exit(); }
 
 $requestId = isset($_GET['request_id']) ? trim($_GET['request_id']) : '';

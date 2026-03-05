@@ -419,7 +419,7 @@ $isPartial = isset($_GET['partial']) && $_GET['partial'] === 'true';
 
         window.loadMessages = function() {
             if (!reqId || productId <= 0 || !msgContainer) return;
-            fetch('fetch_messages.php?request_id=' + encodeURIComponent(reqId) + '&product_id=' + productId + '&_t=' + Date.now(), { cache: 'no-store' })
+            fetch('api/fetch_messages.php?request_id=' + encodeURIComponent(reqId) + '&product_id=' + productId + '&_t=' + Date.now(), { cache: 'no-store' })
             .then(r => r.json())
             .then(data => {
                 if (Array.isArray(data)) {
@@ -463,7 +463,7 @@ $isPartial = isset($_GET['partial']) && $_GET['partial'] === 'true';
             fd.append('request_id', reqId);
             fd.append('message', txt);
 
-            fetch('api_chat_send.php', { method:'POST', body: fd })
+            fetch('api/api_chat_send.php', { method:'POST', body: fd })
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'ok') {
@@ -523,7 +523,7 @@ $isPartial = isset($_GET['partial']) && $_GET['partial'] === 'true';
             fd.append('request_id', reqId);
             fd.append('message', txt);
 
-            fetch('api_chat_send.php', { method:'POST', body: fd })
+            fetch('api/api_chat_send.php', { method:'POST', body: fd })
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'ok') {
@@ -584,7 +584,7 @@ $isPartial = isset($_GET['partial']) && $_GET['partial'] === 'true';
             }
 
             try {
-                const resp = await fetch('api_msupay_pay.php', {
+                const resp = await fetch('api/api_msupay_pay.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -637,7 +637,7 @@ $isPartial = isset($_GET['partial']) && $_GET['partial'] === 'true';
             if (!result.isConfirmed) return;
 
             try {
-                const resp = await fetch('release_escrow.php', {
+                const resp = await fetch('api/release_escrow.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -740,7 +740,7 @@ $isPartial = isset($_GET['partial']) && $_GET['partial'] === 'true';
 
         if (formValues) {
             try {
-                const resp = await fetch('api_rate_order.php', {
+                const resp = await fetch('api/api_rate_order.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -816,7 +816,7 @@ $isPartial = isset($_GET['partial']) && $_GET['partial'] === 'true';
             });
 
             try {
-                const resp = await fetch('api_chat_image.php', {
+                const resp = await fetch('api/api_chat_image.php', {
                     method: 'POST',
                     body: fd
                 });

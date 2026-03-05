@@ -29,10 +29,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // A) Upload Avatar
         if ($action === 'upload_avatar' && isset($_FILES['avatar'])) {
             $ext = pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION);
-            $newName = 'u_'.bin2hex(random_bytes(6)).'.'.$ext;
-            if (move_uploaded_file($_FILES['avatar']['tmp_name'], __DIR__.'/../../uploads/avatars/'.$newName)) {
-                $pdo->prepare("UPDATE users SET img=? WHERE user_id=?")->execute([$newName, $user_id]);
-                $flash = ['type'=>'success', 'msg'=>'อัปเดตรูปโปรไฟล์เรียบร้อย'];
+            $tmp = $_FILES['avatar']['tmp_name'];
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $realMime = finfo_file($finfo, $tmp);
+            finfo_close($finfo);
+            
+            $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            if (in_array($realMime, $allowed, true)) {
+                $newName = 'u_'.bin2hex(random_bytes(6)).'.'.$ext;
+                if (move_uploaded_file($tmp, __DIR__.'/../../uploads/avatars/'.$newName)) {
+                    $pdo->prepare("UPDATE users SET img=? WHERE user_id=?")->execute([$newName, $user_id]);
+                    $flash = ['type'=>'success', 'msg'=>'อัปเดตรูปโปรไฟล์เรียบร้อย'];
+                }
+            } else {
+                $flash = ['type'=>'error', 'msg'=>'ไฟล์รูปภาพไม่ถูกต้อง รองรับเฉพาะ JPG, PNG, WEBP, GIF'];
             }
         }
         

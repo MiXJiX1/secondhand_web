@@ -96,6 +96,13 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['product_name'])) {
                 if (!empty($_FILES['images']['size'][$i]) && $_FILES['images']['size'][$i] > 5 * 1024 * 1024) {
                     continue;
                 }
+                
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $realMime = finfo_file($finfo, $_FILES['images']['tmp_name'][$i]);
+                finfo_close($finfo);
+                
+                $allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                if (!in_array($realMime, $allowedMime, true)) continue;
 
                 $new = 'p_'.$productId.'_'.bin2hex(random_bytes(4)).'.'.$ext;
                 if (@move_uploaded_file($_FILES['images']['tmp_name'][$i], $uploadDir.$new)) {

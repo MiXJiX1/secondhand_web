@@ -114,6 +114,15 @@ if ($action === 'verify_slip') {
   }
 
   // บันทึกรูป
+  $allowedMimes = ['image/jpeg', 'image/png', 'image/webp'];
+  $finfo = finfo_open(FILEINFO_MIME_TYPE);
+  $realMime = finfo_file($finfo, $_FILES['slip']['tmp_name']);
+  finfo_close($finfo);
+  
+  if (!in_array($realMime, $allowedMimes, true)) {
+      echo json_encode(['ok'=>false,'message'=>'invalid file format']); exit;
+  }
+
   $dir = __DIR__.'/../../uploads/slips/';
   if (!is_dir($dir)) mkdir($dir,0777,true);
   $saveName = 'slip_'.$req['topup_id'].'_'.time().'.'.pathinfo($_FILES['slip']['name'], PATHINFO_EXTENSION);

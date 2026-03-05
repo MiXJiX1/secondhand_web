@@ -285,11 +285,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $userId > 0) {
           if ($_FILES['images']['error'][$key] === UPLOAD_ERR_OK) {
             $tmp_name = $_FILES['images']['tmp_name'][$key];
             $ext = pathinfo($name, PATHINFO_EXTENSION);
-            $new_name = uniqid('img_') . '.' . $ext;
-            $upload_dir = __DIR__ . '/../../uploads/';
-            if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
-            if (move_uploaded_file($tmp_name, $upload_dir . $new_name)) {
-              $image_paths[] = $new_name;
+            
+            $finfo = finfo_open(FILEINFO_MIME_TYPE);
+            $realMime = finfo_file($finfo, $tmp_name);
+            finfo_close($finfo);
+            
+            $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+            if (in_array($realMime, $allowed, true)) {
+                $new_name = uniqid('img_') . '.' . $ext;
+                $upload_dir = __DIR__ . '/../../uploads/';
+                if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+                if (move_uploaded_file($tmp_name, $upload_dir . $new_name)) {
+                  $image_paths[] = $new_name;
+                }
             }
           }
         }

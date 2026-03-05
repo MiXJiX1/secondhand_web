@@ -83,6 +83,12 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && ($_POST['action'] ?? '')==='create' )
         if (!in_array($type, $allow, true)) throw new RuntimeException('ชนิดไฟล์ไม่รองรับ');
 
         $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+        
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $realMime = finfo_file($finfo, $tmp);
+        finfo_close($finfo);
+        if (!in_array($realMime, $allow, true)) throw new RuntimeException('เนื้อหาไฟล์ไม่ถูกต้อง');
+
         $new = 'att_' . bin2hex(random_bytes(8)) . ($ext?'.'.$ext:'');
         if (!move_uploaded_file($tmp, $uploadDirFs.$new)) throw new RuntimeException('บันทึกไฟล์แนบไม่สำเร็จ');
         @chmod($uploadDirFs.$new, 0644);

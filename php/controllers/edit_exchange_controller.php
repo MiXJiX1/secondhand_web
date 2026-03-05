@@ -100,6 +100,13 @@ if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['title'])) {
                     if ($_FILES['images']['error'][$i] !== UPLOAD_ERR_OK) continue;
                     $ext = strtolower(pathinfo($fname, PATHINFO_EXTENSION));
                     if (!in_array($ext, $allowed)) continue;
+                    
+                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                    $realMime = finfo_file($finfo, $_FILES['images']['tmp_name'][$i]);
+                    finfo_close($finfo);
+                    
+                    $allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                    if (!in_array($realMime, $allowedMime, true)) continue;
 
                     $newName = 'ex_' . uniqid() . '_' . time() . '.' . $ext;
                     if (move_uploaded_file($_FILES['images']['tmp_name'][$i], $uploadDir . $newName)) {

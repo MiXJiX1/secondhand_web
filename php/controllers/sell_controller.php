@@ -21,9 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if(!empty($_FILES['images']['name'][0])) {
             foreach($_FILES['images']['tmp_name'] as $i => $tmp) {
                 $ext = pathinfo($_FILES['images']['name'][$i], PATHINFO_EXTENSION);
-                $new = 'p_'.bin2hex(random_bytes(8)).'.'.$ext;
-                move_uploaded_file($tmp, __DIR__.'/../../uploads/'.$new);
-                $images[] = $new;
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $realMime = finfo_file($finfo, $tmp);
+                finfo_close($finfo);
+                
+                $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+                if (in_array($realMime, $allowed, true)) {
+                    $new = 'p_'.bin2hex(random_bytes(8)).'.'.$ext;
+                    move_uploaded_file($tmp, __DIR__.'/../../uploads/'.$new);
+                    $images[] = $new;
+                }
             }
         }
         

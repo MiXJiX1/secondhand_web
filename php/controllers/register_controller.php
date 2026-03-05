@@ -42,8 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $avatar = 'default.png';
     if (!empty($_FILES['avatar']['name'])) {
         $ext = pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION);
-        $avatar = 'u_'.bin2hex(random_bytes(8)).'.'.$ext;
-        move_uploaded_file($_FILES['avatar']['tmp_name'], __DIR__.'/../../uploads/avatars/'.$avatar);
+        $tmp = $_FILES['avatar']['tmp_name'];
+        
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $realMime = finfo_file($finfo, $tmp);
+        finfo_close($finfo);
+        
+        $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+        if (in_array($realMime, $allowed, true)) {
+            $avatar = 'u_'.bin2hex(random_bytes(8)).'.'.$ext;
+            move_uploaded_file($tmp, __DIR__.'/../../uploads/avatars/'.$avatar);
+        }
     }
 
     $hash = password_hash($pwd, PASSWORD_DEFAULT);

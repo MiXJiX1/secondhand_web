@@ -1,0 +1,183 @@
+/* =========================================
+   Exchange Page - Light-Yellow
+   ========================================= */
+
+body {
+  background-color: var(--bg-deep);
+}
+
+.ex-bell {
+  cursor: pointer;
+  position: relative;
+  padding: 0.5rem 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.ex-bell:hover {
+  border-color: var(--accent-amber);
+  color: var(--text-primary);
+}
+
+.ex-bell svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ex-badge {
+  background: var(--accent-amber);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.ex-pop {
+  position: fixed;
+  top: 5rem;
+  right: 2rem;
+  width: 320px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-premium);
+  z-index: 1100;
+  display: none;
+  overflow: hidden;
+}
+
+.ex-pop .top {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ex-pop #exMark {
+  background: none;
+  border: none;
+  color: var(--accent-amber);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#exList {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.ex-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.ex-item:hover {
+  background: var(--bg-deep);
+}
+
+.ex-item a {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.ex-item small {
+  color: var(--text-muted);
+}
+
+.filter-panel {
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.ex-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: var(--transition);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.ex-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-premium);
+  border-color: var(--accent-amber);
+}
+
+.ex-thumb {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+.ex-body {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ex-ava {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.btn-ex {
+  font-weight: 700;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  text-align: center;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.btn-ex-primary {
+  background: var(--accent-amber);
+  color: #fff;
+  border: none;
+}
+
+.btn-ex-primary:hover {
+  background: var(--accent-gold);
+  color: #fff;
+}
+
+.receipt-box {
+  background: var(--bg-deep);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+}
+
+.receipt-ok {
+  color: var(--success);
+  font-weight: 700;
+}
+
+.receipt-wait {
+  color: var(--text-muted);
+}

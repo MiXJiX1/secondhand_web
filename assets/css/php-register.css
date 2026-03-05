@@ -1,0 +1,136 @@
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background: radial-gradient(circle at bottom left, #f8fafc, #e2e8f0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 2rem;
+    color: var(--text-primary);
+}
+
+.wrap {
+    width: 100%;
+    max-width: 500px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-premium);
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.title h2 {
+    font-size: 1.8rem;
+    background: linear-gradient(to right, var(--accent-amber), var(--accent-gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sub {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+form>div:not(.avatar-row):not(.actions) {
+    grid-column: span 1;
+}
+
+form>div.full-width {
+    grid-column: span 2;
+}
+
+@media (max-width: 480px) {
+    form>div {
+        grid-column: span 2 !important;
+    }
+}
+
+.avatar-row {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: rgba(0, 0, 0, 0.02);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--glass-border);
+}
+
+.avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-amber);
+}
+
+label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+    display: block;
+}
+
+input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    padding: 0.7rem 1rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+input:focus {
+    border-color: var(--accent-amber);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.btn-file {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-file:hover {
+    background: var(--bg-input);
+}
+
+.actions {
+    grid-column: span 2;
+    margin-top: 1rem;
+}
+
+.help {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}

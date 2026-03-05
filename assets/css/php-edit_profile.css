@@ -1,0 +1,33 @@
+:root{
+      --brand:#ffcc00;
+      --ink:#111827;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --bg:#f8fafc;
+      --shadow:0 10px 30px rgba(2,6,23,.06);
+    }
+    body{background:var(--bg); color:var(--ink); font-family:ui-sans-serif,system-ui,"Segoe UI",Roboto,Arial}
+    .topbar{position:sticky;top:0;z-index:20;background:var(--brand);box-shadow:0 2px 10px rgba(0,0,0,.06)}
+    .topbar .container{display:flex;align-items:center;gap:.75rem;padding:.9rem 1rem}
+    .topbar-title{font-weight:800}
+    .page{max-width:760px;margin:28px auto;padding:0 16px}
+    .card-modern{background:var(--card); border:1px solid #eef2f7; border-radius:18px; box-shadow:var(--shadow)}
+    .card-modern .card-body{padding:24px}
+    .form-label{font-weight:700; color:#111; margin-bottom:.4rem}
+    .form-control{border-radius:12px; padding:.75rem .95rem}
+    .input-group>.form-control{border-radius:12px 0 0 12px}
+    .input-group .btn{border-radius:0 12px 12px 0}
+    .btn-brand{background:var(--brand); color:#111; font-weight:800; border-radius:12px; padding:.85rem 1rem}
+    .btn-brand:hover{filter:brightness(0.95)}
+    .btn-ghost{background:#374151; color:#fff; border-radius:12px; padding:.85rem 1rem}
+    .help{color:var(--muted); font-size:.85rem}
+    @media (max-width: 576px){
+      .actions .btn{width:100%}
+    }
+
+
+/* Auto injected animations */
+.container { animation: slideUp 0.8s ease-out; }
+.card, .wrap, .tbl-wrap, .form-container { animation: slideUp 0.6s backwards; }
+.product-card { transition: transform 0.3s, box-shadow 0.3s; }
+.product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }

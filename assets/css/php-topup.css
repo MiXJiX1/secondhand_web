@@ -1,0 +1,89 @@
+/* =========================================
+   Topup Page - Light-Yellow
+   ========================================= */
+
+body {
+  background: var(--bg-deep);
+}
+
+.balance-card {
+  background: linear-gradient(135deg, var(--accent-amber), var(--accent-gold));
+  color: #fff;
+  padding: 2.5rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-premium);
+}
+
+.balance-card .amount {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+}
+
+.topup-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  height: 100%;
+}
+
+.qrbox {
+  text-align: center;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin: 1.5rem 0;
+  display: none;
+}
+
+#qrImg {
+  max-width: 200px;
+  margin-bottom: 1rem;
+}
+
+.qrref {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.history-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.table thead th {
+  background: var(--bg-deep);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  padding: 1rem;
+}
+
+.table tbody td {
+  padding: 1rem;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.badge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge.approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}

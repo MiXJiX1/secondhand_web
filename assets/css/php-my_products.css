@@ -1,0 +1,169 @@
+/* =========================================
+   My Products - Light-Yellow
+   ========================================= */
+
+body {
+    background: var(--bg-deep);
+}
+
+.topbar {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.btn-header {
+    background: var(--accent-glow);
+    color: var(--accent-gold);
+    border: 1px solid var(--accent-amber);
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.wrap {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-premium);
+    border-color: var(--accent-glow);
+}
+
+.thumb {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    background: var(--bg-card);
+}
+
+.body {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.meta {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--accent-amber);
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border-top: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.btn {
+    padding: 0.6rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.btn-view {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-edit {
+    background: var(--accent-glow);
+    color: var(--accent-gold);
+    border: 1px solid var(--accent-amber);
+}
+
+.btn-del {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.btn:hover {
+    filter: brightness(1.2);
+}
+
+.sold-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #ef4444;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    z-index: 2;
+}
+
+.card.sold .thumb {
+    filter: grayscale(1) opacity(0.5);
+}
+
+.card.sold .name {
+    color: var(--text-muted);
+}
+
+.empty {
+    text-align: center;
+    padding: 5rem;
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--border);
+}

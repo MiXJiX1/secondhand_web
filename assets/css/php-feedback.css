@@ -1,0 +1,45 @@
+:root{--brand:#ffcc00;--ink:#222;--muted:#777;--bg:#f7f7f7;--shadow:0 6px 18px rgba(0,0,0,.08)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:var(--ink)}
+header{
+  background:var(--brand);
+  padding:12px 16px;
+  display:grid;
+  grid-template-columns:auto 1fr auto; /* ซ้าย: ปุ่มกลับ | กลาง: ชื่อ | ขวา: แท็บ */
+  align-items:center;
+  gap:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
+}
+h1{margin:0;font-size:18px;font-weight:800;text-align:center}
+a.btn-header{
+  display:inline-block;background:#1f1f1f;color:#fff;text-decoration:none;
+  padding:8px 12px;border-radius:10px;font-weight:800;
+  box-shadow:0 3px 0 rgba(0,0,0,.25);
+}
+a.btn-header:hover{background:#000}
+a.btn,button.btn{display:inline-block;padding:8px 12px;border-radius:10px;border:0;background:#111;color:#fff;text-decoration:none;font-weight:800;cursor:pointer}
+a.btn:hover,button.btn:hover{background:#000}
+.tabs{display:flex;gap:8px;justify-self:end}
+.tab{padding:8px 12px;border-radius:999px;background:#fff8cc;cursor:pointer;text-decoration:none;color:#111;font-weight:800}
+.tab.active{background:#111;color:#fff}
+.container{max-width:1000px;margin:18px auto;padding:0 16px}
+.panel{background:#fff;border-radius:14px;box-shadow:var(--shadow);padding:16px;margin-bottom:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:760px){.row{grid-template-columns:1fr}}
+input[type=text],textarea,select{width:100%;padding:10px;border:1px solid #ddd;border-radius:10px}
+textarea{min-height:90px;resize:vertical}
+.small{font-size:12px;color:var(--muted)}
+.star input{display:none}
+.star label{font-size:22px;cursor:pointer;color:#ddd}
+.star input:checked ~ label, .star label:hover, .star label:hover ~ label{color:#ffb703}
+.list{display:grid;gap:10px}
+.item{padding:10px;border:1px solid #eee;border-radius:10px}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;background:#ffe9a8;margin-left:6px}
+footer{padding:20px 0;color:#aaa;text-align:center}
+
+
+/* Auto injected animations */
+.container { animation: slideUp 0.8s ease-out; }
+.card, .wrap, .tbl-wrap, .form-container { animation: slideUp 0.6s backwards; }
+.product-card { transition: transform 0.3s, box-shadow 0.3s; }
+.product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }

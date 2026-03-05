@@ -1,0 +1,9 @@
+RewriteEngine On
+
+# Ensure we don't rewrite actual files or directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rewrite everything else to index.php
+# This will catch URLs like /product/view/1 and send them to index.php?path=product/view/1
+RewriteRule ^(.*)$ index.php?path=$1 [QSA,L]

@@ -1,0 +1,10 @@
+body{font-family:Segoe UI;display:grid;place-items:center;height:100vh}
+.card{padding:24px;border:1px solid #eee;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.06);text-align:center}
+.ok{color:#0a7a2a}.no{color:#b3001b}
+
+
+/* Auto injected animations */
+.container { animation: slideUp 0.8s ease-out; }
+.card, .wrap, .tbl-wrap, .form-container { animation: slideUp 0.6s backwards; }
+.product-card { transition: transform 0.3s, box-shadow 0.3s; }
+.product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }

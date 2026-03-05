@@ -1,0 +1,53 @@
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Dependencies
+vendor/
+node_modules/
+
+# IDE and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment settings
+.env
+.env.local
+.env.development
+.env.production
+
+# Uploaded Files
+uploads/*
+!uploads/.gitkeep
+!uploads/avatars/
+uploads/avatars/*
+!uploads/avatars/.gitkeep
+!uploads/avatars/default.png
+!uploads/chat/
+uploads/chat/*
+!uploads/chat/.gitkeep
+!uploads/slips/
+uploads/slips/*
+!uploads/slips/.gitkeep
+!uploads/support/
+uploads/support/*
+!uploads/support/.gitkeep
+
+# Error logs
+error_log
+*.log
+
+# Temp files
+*.tmp
+*.bak
+*.swp
